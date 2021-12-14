@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SocialNetwork.Models.ChatModels;
 using System.Threading.Tasks;
 
 namespace SocialNetwork.Models.UserModels
@@ -10,15 +11,17 @@ namespace SocialNetwork.Models.UserModels
         public int Id { get; set; }
         public UserIdentity UserIdentity { get; set; }
         public UserInfo UserInfo { get; set; }
-        public byte[] ProfileImage { get; set; }
         public List<UserPost> UserPosts { get; set; }
         public List<UserIdentity> UserFriends { get; set; }
         public List<UserAccount> FriendRequests { get; set; }
+        public List<Chat> UserChats { get; set; }
+
         public UserAccount()
         {
             UserPosts = new List<UserPost>();
             UserFriends = new List<UserIdentity>();
             FriendRequests = new List<UserAccount>();
+            UserChats = new List<Chat>();
         }
     }
 }
