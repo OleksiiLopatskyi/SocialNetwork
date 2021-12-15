@@ -11,13 +11,13 @@ namespace SocialNetwork.Models.UserModels
         public byte[] Image { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
-        public List<UserIdentity> Likes { get; set; }
-        public List<PostComment> Comments { get; set; }
+        public List<Like> Likes { get; set; }
+        public List<Comment> Comments { get; set; }
 
         public UserPost()
         {
-            Likes = new List<UserIdentity>();
-            Comments = new List<PostComment>();
+            Likes = new List<Like>();
+            Comments = new List<Comment>();
         }
 
     }

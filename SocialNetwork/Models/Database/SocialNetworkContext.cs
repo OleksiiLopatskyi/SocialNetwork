@@ -14,9 +14,10 @@ namespace SocialNetwork.Models.Database
         public DbSet<UserIdentity> UserIdentities { get; set; }
         public DbSet<UserInfo> UserInfos { get; set; }
         public DbSet<UserPost> UserPosts { get; set; }
-        public DbSet<PostComment> UserPostComments { get; set; }
+        public DbSet<Comment> UserPostComments { get; set; }
         public DbSet<Chat> UserChats { get; set; }
         public DbSet<Message> UserMessages { get; set; }
+        public DbSet<Like> Likes { get; set; }
         public SocialNetworkContext(DbContextOptions<SocialNetworkContext>options):base(options)
         {
             Database.EnsureCreated();

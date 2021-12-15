@@ -11,11 +11,11 @@ namespace SocialNetwork.Models.ChatModels
         public int Id { get; set; }
         public string UserFrom { get; set; }
         public string UserTo { get; set; }
-        public List<UserIdentity> Likes { get; set; }
+        public List<Like> Likes { get; set; }
         public string Text { get; set; }
         public Message()
         {
-            Likes = new List<UserIdentity>();
+            Likes = new List<Like>();
         }
     }
 }
