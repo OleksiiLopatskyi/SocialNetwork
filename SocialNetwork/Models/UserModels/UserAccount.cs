@@ -9,18 +9,20 @@ namespace SocialNetwork.Models.UserModels
     public class UserAccount
     {
         public int Id { get; set; }
-        public UserIdentity UserIdentity { get; set; }
-        public UserInfo UserInfo { get; set; }
+        public int UserAccountId { get; set; }
+        public int UserIdentityId { get; set; }
+        public int UserInfoId { get; set; }
         public List<UserPost> UserPosts { get; set; }
         public List<UserIdentity> UserFriends { get; set; }
-        public List<UserAccount> FriendRequests { get; set; }
+        public List<UserInfo> FriendRequests { get; set; }
         public List<Chat> UserChats { get; set; }
-
+        public UserIdentity UserIdentity { get; set; }
+        public UserInfo UserInfo { get; set; }
         public UserAccount()
         {
             UserPosts = new List<UserPost>();
             UserFriends = new List<UserIdentity>();
-            FriendRequests = new List<UserAccount>();
+            FriendRequests = new List<UserInfo>();
             UserChats = new List<Chat>();
         }
     }
