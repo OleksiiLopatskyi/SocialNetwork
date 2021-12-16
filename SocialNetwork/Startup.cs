@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using SocialNetwork.Services;
 
 namespace SocialNetwork
 {
@@ -32,6 +33,7 @@ namespace SocialNetwork
             services.AddDbContext<SocialNetworkContext>(o=>o.UseSqlServer(connection));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(c =>
             c.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"));
+            services.AddTransient<IDbService, DbService>();
             services.AddControllersWithViews();
         }
 

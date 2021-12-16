@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SocialNetwork.Models;
+using SocialNetwork.Models.Database;
+using SocialNetwork.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,15 +15,20 @@ namespace SocialNetwork.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private SocialNetworkContext _db;
+        private IDbService _dbService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,IDbService service, SocialNetworkContext context)
         {
             _logger = logger;
+            _dbService = service;
+            _db = context;
         }
-
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _dbService.GetUserByUsername(_db,User.Identity.Name);
+            return View(user);
         }
 
         public IActionResult Privacy()
