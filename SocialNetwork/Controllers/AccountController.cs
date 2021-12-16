@@ -9,6 +9,7 @@ using SocialNetwork.Services;
 using SocialNetwork.Models.UserModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using System.Web;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,6 @@ namespace SocialNetwork.Controllers
         }
         [HttpPost]
         [Route("[controller]/[action]")]
-        [ValidateAntiForgeryToken()]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -46,11 +46,11 @@ namespace SocialNetwork.Controllers
                 {
                     var userIdentity = await _dbService.GetUserIdentity(_db, userAccount);
                     await Authenticate(userIdentity);
-                    return RedirectToAction("Index", "Home");
+
+                    return Json(new {success = true,url = @"https://localhost:44307" });
                 }
-                ModelState.AddModelError("", "Login or(and) password is(are) incorrect");
             }
-            return View(model);
+            return Json(new {success=false,errorText = "Login or(and) password is(are) incorrect" });
         }
 
         [HttpGet]

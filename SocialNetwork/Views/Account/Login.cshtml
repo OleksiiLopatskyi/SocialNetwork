@@ -3,11 +3,7 @@
     Layout = "_Layout";
 }
 <style>
-    .validation ul li {
-        font-family: 'Ubuntu';
-        color: red;
-        font-size:13px;
-    }
+    
 </style>
 <head>
     <title>Login V1</title>
@@ -32,29 +28,29 @@
                     <img src="~/css/Login/images/img-01.png" alt="IMG">
                 </div>
 
-                <form asp-action="Login" asp-controller="Account" method="post" asp-antiforgery="true" class="login100-form validate-form">
+                <form asp-antiforgery="true" class="login100-form validate-form">
                     <span class="login100-form-title">
                         Member Login
                     </span>
 
                     <div class="wrap-input100 validate-input">
-                        <input class="input100" type="text" asp-for="Login" placeholder="Login">
+                        <input id="Login" class="input100" type="text" placeholder="Login">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
                         </span>
                     </div>
                     <div class="wrap-input100 validate-input">
-                        <input class="input100" type="password" asp-for="Password" placeholder="Password">
+                        <input id="Password" class="input100" type="password" placeholder="Password">
                         <span class="focus-input100"></span>
                         <span class="symbol-input100">
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                     </div>
-                    <div class="validation" asp-validation-summary="ModelOnly"></div>
-
+                        <span class="validation"></span>
+                    <br>
                     <div class="container-login100-form-btn">
-                        <input type="submit" class="login100-form-btn" value="Login" />
+                        <button id="SubmitForm" class="login100-form-btn">Login</button>
                     </div>
 
                     <div class="text-center p-t-12">
@@ -76,5 +72,43 @@
             </div>
         </div>
     </div>
-
 </body>
+@section scripts{ 
+    <script>
+    $(document).ready(function (e) {
+        $('#SubmitForm').click(function (e) {
+            e.preventDefault();
+            var login = $('#Login').val();
+            var password = $('#Password').val();
+
+            var LoginViewModel = {
+                Login: login,
+                Password: password
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/Account/Login",
+                data: LoginViewModel,
+                success: function (json) {
+                    if (json.success == true) {
+                        $('.validation').css("color", "green");
+                        $('.validation').hide();
+                        $('.validation').text("Success");
+                        $('.validation').fadeIn();
+                        window.setTimeout(function () {
+                    var loadedWindow = window.location.href = '@Url.Action("Index", "Home")';
+                    },1000);
+                    } else {
+                        $('.validation').hide();
+                        $('.validation').text(json.errorText);
+                        $('.validation').fadeIn();
+
+                    }
+
+                },
+            });
+        });
+    });
+    </script>
+}
