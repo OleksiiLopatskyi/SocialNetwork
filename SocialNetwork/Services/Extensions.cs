@@ -17,12 +17,13 @@ namespace SocialNetwork.Services
                 return memoryStream.ToArray();
             }
         }
-        public static IFormFile GetIFormFileFromByte(this byte[] byteString)
+        public static string GetImageFromByte(this byte[] byteString)
         {
             using (var memoryStream = new MemoryStream(byteString))
             {
-                IFormFile file = new FormFile(memoryStream,0,byteString.Length,"Image","UserProfileImage");
-                return file;
+                var userImageBase64 = Convert.ToBase64String(byteString);
+                string image = string.Format($"data:image/jpg;base64,{userImageBase64}");
+                return image;
             }
         }
     }

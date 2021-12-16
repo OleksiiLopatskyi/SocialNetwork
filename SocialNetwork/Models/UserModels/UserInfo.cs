@@ -13,7 +13,7 @@ namespace SocialNetwork.Models.UserModels
     public class UserInfo
     {
         public int Id { get; set; }
-        public byte[] ProfileImage { get; set; }
+        public string ProfileImage { get; set; }
         public UserStatus Status { get; set; }
         public int Age { get; set; }
         public string Country { get; set; }

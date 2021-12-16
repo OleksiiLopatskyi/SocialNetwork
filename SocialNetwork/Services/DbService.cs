@@ -45,6 +45,8 @@ namespace SocialNetwork.Services
         public async Task<UserAccount> RegisterUser(SocialNetworkContext context, RegisterViewModel model)
         {
             Role role = await context.Roles.FirstOrDefaultAsync(i => i.Name == "user");
+            var profileImage = await model.ProfileImage.GetBytes();
+
             UserIdentity userIdentity = new UserIdentity()
             {
                 Email = model.Email,
@@ -52,9 +54,10 @@ namespace SocialNetwork.Services
                 Password = model.Password,
                 Role = role,
             };
+
             UserInfo userInfo = new UserInfo()
             {
-                ProfileImage = await model.ProfileImage.GetBytes(),
+                ProfileImage = profileImage.GetImageFromByte(),
                 Age = DateTime.Now.Year-model.BirthDay.Year,
                 Country = model.Country,
                 City = model.City,

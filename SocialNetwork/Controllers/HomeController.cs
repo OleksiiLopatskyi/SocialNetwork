@@ -28,9 +28,7 @@ namespace SocialNetwork.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _dbService.GetUserByUsername(_db,User.Identity.Name);
-            var userImageBase64 = Convert.ToBase64String(user.UserInfo.ProfileImage);
-            ViewBag.Src_ProfileImage = string.Format($"data:image/jpg;base64,{userImageBase64}");
-            return View();
+            return View(user);
         }
 
         public IActionResult Privacy()
