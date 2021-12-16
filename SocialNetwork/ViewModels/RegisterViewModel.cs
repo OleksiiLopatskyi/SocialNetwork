@@ -24,7 +24,7 @@ namespace SocialNetwork.ViewModels
 
         //Profile Details
         public IFormFile ProfileImage { get; set; }
-        public int Age { get; set; }
+        public DateTime BirthDay { get; set; }
         public UserStatus Status { get; set; }
         public string Country { get; set; }
         public string City { get; set; }

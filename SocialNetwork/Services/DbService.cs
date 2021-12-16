@@ -25,6 +25,17 @@ namespace SocialNetwork.Services
             return user;
         }
 
+        public async Task<UserAccount> GetUserByUsername(SocialNetworkContext context,string userName)
+        {
+            var userIdentity = await context.UserIdentities.FirstOrDefaultAsync(i=>i.Username==userName);
+            var userAccount = await context.UserAccounts
+                .Include(i=>i.UserChats)
+                .Include(i=>i.UserFriends)
+                .Include(i=>i.UserInfo)
+                .FirstOrDefaultAsync(i=>i.Id==userIdentity.Id);
+            return userAccount;
+        }
+
         public async Task<UserIdentity> GetUserIdentity(SocialNetworkContext context, UserAccount account)
         {
             var user = await context.UserIdentities.Include(i => i.Role).FirstOrDefaultAsync(i=>i.Id==account.Id);
@@ -44,7 +55,7 @@ namespace SocialNetwork.Services
             UserInfo userInfo = new UserInfo()
             {
                 ProfileImage = await model.ProfileImage.GetBytes(),
-                Age = model.Age,
+                Age = DateTime.Now.Year-model.BirthDay.Year,
                 Country = model.Country,
                 City = model.City,
                 Status = model.Status
