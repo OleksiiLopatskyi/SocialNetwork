@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace SocialNetwork.Controllers
 {
+    [Authorize]
+    [Authorize(Policy = "UserWithConfirmedOnly")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -24,7 +26,8 @@ namespace SocialNetwork.Controllers
             _dbService = service;
             _db = context;
         }
-        [Authorize]
+       
+        
         public async Task<IActionResult> Index()
         {
             var user = await _dbService.GetUserByUsername(_db,User.Identity.Name);

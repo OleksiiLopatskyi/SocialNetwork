@@ -38,7 +38,7 @@ namespace SocialNetwork.Services
 
         public async Task<UserIdentity> GetUserIdentity(SocialNetworkContext context, UserAccount account)
         {
-            var user = await context.UserIdentities.Include(i => i.Role).FirstOrDefaultAsync(i=>i.Id==account.Id);
+            var user = await context.UserIdentities.Include(i => i.Role).FirstOrDefaultAsync(i=>i.Username==account.UserIdentity.Username);
             return user;
         }
 
@@ -52,6 +52,8 @@ namespace SocialNetwork.Services
                 Email = model.Email,
                 Username = model.Username,
                 Password = model.Password,
+                isEmailConfirmed=EmailConfirm.NotConfirmed,
+                EmailVerificationCode=string.Empty,
                 Role = role,
             };
 
@@ -73,5 +75,6 @@ namespace SocialNetwork.Services
             return userAccount;
 
         }
+
     }
 }

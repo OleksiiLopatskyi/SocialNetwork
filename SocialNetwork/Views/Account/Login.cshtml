@@ -3,7 +3,6 @@
     Layout = "_Layout";
 }
 <style>
-    
 </style>
 <head>
     <title>Login V1</title>
@@ -47,7 +46,7 @@
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </span>
                     </div>
-                        <span class="validation"></span>
+                    <span class="validation"></span>
                     <br>
                     <div class="container-login100-form-btn">
                         <button id="SubmitForm" class="login100-form-btn">Login</button>
@@ -73,25 +72,24 @@
         </div>
     </div>
 </body>
-@section scripts{ 
+@section scripts{
     <script>
     $(document).ready(function (e) {
         $('#SubmitForm').click(function (e) {
             e.preventDefault();
             var login = $('#Login').val();
             var password = $('#Password').val();
-
             var LoginViewModel = {
                 Login: login,
                 Password: password
             };
-
             $.ajax({
                 type: "POST",
                 url: "/Account/Login",
                 data: LoginViewModel,
                 success: function (json) {
                     if (json.success == true) {
+                        alert("Hello");
                         $('.validation').css("color", "green");
                         $('.validation').hide();
                         $('.validation').text("Success");
@@ -103,9 +101,7 @@
                         $('.validation').hide();
                         $('.validation').text(json.errorText);
                         $('.validation').fadeIn();
-
                     }
-
                 },
             });
         });

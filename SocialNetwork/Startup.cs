@@ -33,7 +33,11 @@ namespace SocialNetwork
             services.AddDbContext<SocialNetworkContext>(o=>o.UseSqlServer(connection));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(c =>
             c.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"));
+            services.AddAuthorization(o=>
+            o.AddPolicy("UserWithConfirmedOnly",policy=>policy.RequireClaim("EmailStatus","Confirmed"))
+            );
             services.AddTransient<IDbService, DbService>();
+            services.AddTransient<IEmailService, EmailService>();
             services.AddControllersWithViews();
         }
 
@@ -52,7 +56,7 @@ namespace SocialNetwork
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
