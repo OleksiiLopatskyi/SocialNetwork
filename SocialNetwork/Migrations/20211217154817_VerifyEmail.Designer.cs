@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialNetwork.Models.Database;
 
 namespace SocialNetwork.Migrations
 {
     [DbContext(typeof(SocialNetworkContext))]
-    partial class SocialNetworkContextModelSnapshot : ModelSnapshot
+    [Migration("20211217154817_VerifyEmail")]
+    partial class VerifyEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,6 +206,9 @@ namespace SocialNetwork.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailVerificationCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -216,11 +221,8 @@ namespace SocialNetwork.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VerificationCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("isEmailConfirmed")
-                        .HasColumnType("int");
+                    b.Property<bool>("isEmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -238,7 +240,7 @@ namespace SocialNetwork.Migrations
                             Password = "12345",
                             RoleId = 2,
                             Username = "admin",
-                            isEmailConfirmed = 0
+                            isEmailConfirmed = false
                         });
                 });
 

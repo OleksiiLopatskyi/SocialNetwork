@@ -8,10 +8,15 @@ using System.Threading.Tasks;
 using SocialNetwork.Services;
 using SocialNetwork.Models.UserModels;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using System.Web;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Security.Policy;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocialNetwork.Controllers
 {
@@ -19,10 +24,12 @@ namespace SocialNetwork.Controllers
     {
         private SocialNetworkContext _db;
         private IDbService _dbService;
-        public AccountController(SocialNetworkContext shoppingContext,IDbService db_service)
+        private IEmailService _emailService;
+        public AccountController(SocialNetworkContext shoppingContext,IDbService db_service,IEmailService emailService)
         {
             _db = shoppingContext;
             _dbService=db_service;
+            _emailService = emailService;
         }
         public IActionResult Index()
         {
@@ -39,6 +46,7 @@ namespace SocialNetwork.Controllers
         [Route("[controller]/[action]")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+
             if (ModelState.IsValid)
             {
                 var userAccount =  await _dbService.GetUser(_db,model);
@@ -46,8 +54,8 @@ namespace SocialNetwork.Controllers
                 {
                     var userIdentity = await _dbService.GetUserIdentity(_db, userAccount);
                     await Authenticate(userIdentity);
-
-                    return Json(new {success = true,url = @"https://localhost:44307" });
+                   
+                   return Json(new { success = true });
                 }
             }
             return Json(new {success=false,errorText = "Login or(and) password is(are) incorrect" });
@@ -65,34 +73,148 @@ namespace SocialNetwork.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _dbService.GetUser(_db,model).Result;
-                if (user == null)
+                var user = await _dbService.GetUser(_db,model);
+                if (user != null)
                 {
-                    await _dbService.RegisterUser(_db,model);
+                    bool userWithEmailExists = await _dbService.isUserWithEmailExists(_db, model);
+                    bool userWithUsernameExists = await _dbService.isUserWithUsernameExists(_db, model);
+                    if (userWithEmailExists && userWithUsernameExists)
+                    {
+                        ModelState.AddModelError("", "User with current email or username already exists");
+                    }
+                    else
+                    {
+                        if (userWithEmailExists)
+                        {
+                            ModelState.AddModelError("", "User with current email already exists");
+                        }
+                        if (userWithUsernameExists)
+                        {
+                            ModelState.AddModelError("", "User with current username already exists");
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    var registeredUser = await _dbService.RegisterUser(_db, model);
+                    await Authenticate(registeredUser.UserIdentity);
                     return RedirectToAction("Index", "Home");
                 }
-                else ModelState.AddModelError("", "Incorrect login and(or)password");
+
+
             }
             return View(model);
         }
         private async Task Authenticate(UserIdentity user)
         {
             var claims = new List<Claim>()
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Username),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name)
-            };
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",
-                                                   ClaimsIdentity.DefaultNameClaimType,
-                                                   ClaimsIdentity.DefaultRoleClaimType
-                                                   );
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Username),
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role?.Name),
+                    new Claim("EmailStatus",user.isEmailConfirmed.ToString())
+                };
+                ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",
+                                                       ClaimsIdentity.DefaultNameClaimType,
+                                                       ClaimsIdentity.DefaultRoleClaimType
+                                                       );
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));    
         }
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
-    
+        public async Task<IActionResult> VerifyEmail()
+        {
+            var account = await _dbService.GetUserByUsername(_db, User.Identity.Name);
+            bool isUserConfirmed = await _dbService.CheckUserForEmailStatus(_db,account);
+            if (!isUserConfirmed)
+            {
+                _emailService.SendVerificationEmailAsync(_db, account.UserIdentity.Email, EmailAction.ConfirmEmail, Request);
+                ViewBag.UserEmail = account.UserIdentity.Email;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index","Home");
+            }
+            
+        }
+        [Route("[controller]/[action]/{code}")]
+        public async Task<IActionResult> ConfirmEmail(string code)
+        {
+            var user = await _dbService.GetUserByUsername(_db,User.Identity.Name);
+            if (code == user.UserIdentity.VerificationCode) {
+                user.UserIdentity.isEmailConfirmed=EmailConfirm.Confirmed;
+                user.UserIdentity.VerificationCode = string.Empty;
+                _db.UserAccounts.Update(user);
+                _db.SaveChanges();
+                return RedirectToAction("Login");
+            }
+            else return RedirectToAction("VerifyEmail");
+        }
+        [HttpGet]
+        public IActionResult ForgotPasswordPage()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult>ForgotPasswordPage(string email)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var user = await _dbService.GetUserByEmail(_db,email);
+            if (user != null)
+            {
+                _emailService.SendVerificationEmailAsync(_db,email,EmailAction.ResetPassword,Request);
+                return Json(new { success = true, message = "Success! Please check email" });
+            }
+            else return Json(new { success = false, message = "There are no user with this email" });
+
+        }
+        [HttpGet]
+        [Route("[controller]/[action]/{code}/{email}")]
+        public async Task<IActionResult> ResetPassword(string code,string email)
+        {
+            if (User.Identity.IsAuthenticated||code==null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var user = await _dbService.GetUserByEmail(_db, email);
+            if (code == user.UserIdentity.VerificationCode)
+            {
+                ViewBag.User = user.UserIdentity.Username;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            var user = await _dbService.GetUserByUsername(_db,model.Username);
+            if (ModelState.IsValid)
+            {
+                user.UserIdentity.Password = model.NewPassword;
+                _db.UserAccounts.Update(user);
+                _db.SaveChanges();
+                return Json(new {success=true,message = "Changed"});
+            }
+            return Json(new {success=false,message="Incorrect link"});
+        }
+
     }
 }
