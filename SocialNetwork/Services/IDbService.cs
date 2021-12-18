@@ -12,6 +12,7 @@ namespace SocialNetwork.Services
     {
         Task<UserAccount> GetUser(SocialNetworkContext context,LoginViewModel model);
         Task<UserAccount> GetUser(SocialNetworkContext context, RegisterViewModel model);
+        Task<UserAccount> GetUserByEmail(SocialNetworkContext context, string email);
         Task<UserAccount> GetUserByUsername(SocialNetworkContext context,string userName);
         Task<UserAccount> RegisterUser(SocialNetworkContext context,RegisterViewModel model);
         Task<UserIdentity> GetUserIdentity(SocialNetworkContext context, UserAccount account);

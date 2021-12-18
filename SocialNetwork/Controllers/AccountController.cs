@@ -131,7 +131,7 @@ namespace SocialNetwork.Controllers
             bool isUserConfirmed = await _dbService.CheckUserForEmailStatus(_db,account);
             if (!isUserConfirmed)
             {
-                _emailService.SendVerificationEmailAsync(_db, account.UserIdentity.Email, "VerifyEmailLink", Request);
+                _emailService.SendVerificationEmailAsync(_db, account.UserIdentity.Email, EmailAction.ConfirmEmail, Request);
                 ViewBag.UserEmail = account.UserIdentity.Email;
                 return View();
             }
@@ -142,17 +142,79 @@ namespace SocialNetwork.Controllers
             
         }
         [Route("[controller]/[action]/{code}")]
-        public async Task<IActionResult> VerifyEmailLink(string code)
+        public async Task<IActionResult> ConfirmEmail(string code)
         {
             var user = await _dbService.GetUserByUsername(_db,User.Identity.Name);
-            if (code == user.UserIdentity.EmailVerificationCode) {
+            if (code == user.UserIdentity.VerificationCode) {
                 user.UserIdentity.isEmailConfirmed=EmailConfirm.Confirmed;
-                user.UserIdentity.EmailVerificationCode = string.Empty;
+                user.UserIdentity.VerificationCode = string.Empty;
                 _db.UserAccounts.Update(user);
                 _db.SaveChanges();
                 return RedirectToAction("Login");
             }
             else return RedirectToAction("VerifyEmail");
         }
+        [HttpGet]
+        public IActionResult ForgotPasswordPage()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult>ForgotPasswordPage(string email)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var user = await _dbService.GetUserByEmail(_db,email);
+            if (user != null)
+            {
+                _emailService.SendVerificationEmailAsync(_db,email,EmailAction.ResetPassword,Request);
+                return Json(new { success = true, message = "Success! Please check email" });
+            }
+            else return Json(new { success = false, message = "There are no user with this email" });
+
+        }
+        [HttpGet]
+        [Route("[controller]/[action]/{code}/{email}")]
+        public async Task<IActionResult> ResetPassword(string code,string email)
+        {
+            if (User.Identity.IsAuthenticated||code==null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var user = await _dbService.GetUserByEmail(_db, email);
+            if (code == user.UserIdentity.VerificationCode)
+            {
+                ViewBag.User = user.UserIdentity.Username;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            var user = await _dbService.GetUserByUsername(_db,model.Username);
+            if (ModelState.IsValid)
+            {
+                user.UserIdentity.Password = model.NewPassword;
+                _db.UserAccounts.Update(user);
+                _db.SaveChanges();
+                return Json(new {success=true,message = "Changed"});
+            }
+            return Json(new {success=false,message="Incorrect link"});
+        }
+
     }
 }

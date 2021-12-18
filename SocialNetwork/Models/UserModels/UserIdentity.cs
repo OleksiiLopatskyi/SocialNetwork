@@ -17,7 +17,7 @@ namespace SocialNetwork.Models.UserModels
         public string Username { get; set; }
         public string Password { get; set; }
         public EmailConfirm isEmailConfirmed { get; set; }
-        public string EmailVerificationCode { get; set; }
+        public string VerificationCode { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
     }

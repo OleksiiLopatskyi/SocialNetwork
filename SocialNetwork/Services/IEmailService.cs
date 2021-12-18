@@ -9,6 +9,6 @@ namespace SocialNetwork.Services
 {
     public interface IEmailService
     {
-        void SendVerificationEmailAsync(SocialNetworkContext context,string emailID, string emailFor, HttpRequest request);
+        void SendVerificationEmailAsync(SocialNetworkContext context,string emailID, EmailAction action, HttpRequest request);
     }
 }

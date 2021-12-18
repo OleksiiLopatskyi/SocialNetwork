@@ -53,7 +53,7 @@ namespace SocialNetwork.Services
                 Username = model.Username,
                 Password = model.Password,
                 isEmailConfirmed = EmailConfirm.NotConfirmed,
-                EmailVerificationCode = string.Empty,
+                VerificationCode = string.Empty,
                 Role = role,
             };
 
@@ -97,6 +97,12 @@ namespace SocialNetwork.Services
 
             if (user==null) return false;
             else return true;
+        }
+
+        public async Task<UserAccount> GetUserByEmail(SocialNetworkContext context, string email)
+        {
+            var user =  await context.UserAccounts.Include(i => i.UserIdentity).FirstOrDefaultAsync(i=>i.UserIdentity.Email==email);
+            return user;
         }
     }
 }

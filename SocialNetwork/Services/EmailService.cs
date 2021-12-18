@@ -12,16 +12,17 @@ using SocialNetwork.Models.Database;
 
 namespace SocialNetwork.Services
 {
+    public enum EmailAction
+    {
+        ResetPassword,ConfirmEmail
+    }
     public class EmailService : IEmailService
     {
-        public void SendVerificationEmailAsync(SocialNetworkContext context,string emailID, string emailFor, HttpRequest request)
+        public void SendVerificationEmailAsync(SocialNetworkContext context,string emailID, EmailAction action, HttpRequest request)
             {
             string activationCode = Guid.NewGuid().ToString();
-            var user = context.UserIdentities.FirstOrDefault(i=>i.Email==emailID);
-            user.EmailVerificationCode = activationCode;
-            context.UserIdentities.Update(user);
-            context.SaveChanges();
-            var verifyUrl = "/Account/" + emailFor + "/" + activationCode;
+         
+            var verifyUrl = "/Account/" + action.ToString() + "/" + activationCode;
             var link = UriHelper.GetDisplayUrl(request).Replace(UriHelper.GetEncodedPathAndQuery(request), verifyUrl);
 
             var fromEmail = new MailAddress("AdminSocialNetwork@gmail.com", "Admin");
@@ -31,15 +32,26 @@ namespace SocialNetwork.Services
 
             string subject = "Confirm Email";
             string body = "";
-            if (emailFor == "VerifyEmailLink")
+            if (action == EmailAction.ConfirmEmail)
             {
+                var user = context.UserIdentities.FirstOrDefault(i => i.Email == emailID);
+                user.VerificationCode = activationCode;
+                context.UserIdentities.Update(user);
+                context.SaveChanges();
+
                 subject = "Your account is successfully created!";
                 body = "<br/><br/>We are excited to tell you that your Dotnet Awesome account is" +
                     " successfully created. Please click on the below link to verify your account" +
                     " <br/><br/><a href='" + link + "'>" + link + "</a> ";
             }
-            else if (emailFor == "ResetPassword")
+            else if (action == EmailAction.ResetPassword)
             {
+                link += "/" + emailID;
+                var user = context.UserIdentities.FirstOrDefault(i => i.Email == emailID);
+                user.VerificationCode = activationCode;
+                context.UserIdentities.Update(user);
+                context.SaveChanges();
+
                 subject = "Reset Password";
                 body = "Hi,<br/>br/>We got request for reset your account password. Please click on the below link to reset your password" +
                     "<br/><br/><a href=" + link + ">Reset Password link</a>";
