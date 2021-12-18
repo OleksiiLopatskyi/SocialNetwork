@@ -74,13 +74,35 @@ namespace SocialNetwork.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _dbService.GetUser(_db,model);
-                if (user == null)
+                if (user != null)
+                {
+                    bool userWithEmailExists = await _dbService.isUserWithEmailExists(_db, model);
+                    bool userWithUsernameExists = await _dbService.isUserWithUsernameExists(_db, model);
+                    if (userWithEmailExists && userWithUsernameExists)
+                    {
+                        ModelState.AddModelError("", "User with current email or username already exists");
+                    }
+                    else
+                    {
+                        if (userWithEmailExists)
+                        {
+                            ModelState.AddModelError("", "User with current email already exists");
+                        }
+                        if (userWithUsernameExists)
+                        {
+                            ModelState.AddModelError("", "User with current username already exists");
+                        }
+                    }
+                    
+                }
+                else
                 {
                     var registeredUser = await _dbService.RegisterUser(_db, model);
                     await Authenticate(registeredUser.UserIdentity);
-                    return RedirectToAction("Index","Home");
+                    return RedirectToAction("Index", "Home");
                 }
-                else ModelState.AddModelError("", "Incorrect login and(or)password");
+
+
             }
             return View(model);
         }
@@ -105,9 +127,19 @@ namespace SocialNetwork.Controllers
         }
         public async Task<IActionResult> VerifyEmail()
         {
-            var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
-            _emailService.SendVerificationEmailAsync(_db, user.UserIdentity.Email, "VerifyEmailLink", Request);
-            return View();
+            var account = await _dbService.GetUserByUsername(_db, User.Identity.Name);
+            bool isUserConfirmed = await _dbService.CheckUserForEmailStatus(_db,account);
+            if (!isUserConfirmed)
+            {
+                _emailService.SendVerificationEmailAsync(_db, account.UserIdentity.Email, "VerifyEmailLink", Request);
+                ViewBag.UserEmail = account.UserIdentity.Email;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Index","Home");
+            }
+            
         }
         [Route("[controller]/[action]/{code}")]
         public async Task<IActionResult> VerifyEmailLink(string code)

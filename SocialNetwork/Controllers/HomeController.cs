@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace SocialNetwork.Controllers
 {
     [Authorize]
-    [Authorize(Policy = "UserWithConfirmedOnly")]
+    [Authorize(Policy = "UserWithConfirmedEmailOnly")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

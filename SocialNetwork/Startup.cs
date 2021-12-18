@@ -33,8 +33,11 @@ namespace SocialNetwork
             services.AddDbContext<SocialNetworkContext>(o=>o.UseSqlServer(connection));
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(c =>
             c.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login"));
-            services.AddAuthorization(o=>
-            o.AddPolicy("UserWithConfirmedOnly",policy=>policy.RequireClaim("EmailStatus","Confirmed"))
+            services.AddAuthorization(o =>
+            {
+                o.AddPolicy("UserWithConfirmedEmailOnly", policy => policy.RequireClaim("EmailStatus", "Confirmed"));
+                o.AddPolicy("!UserWithConfirmedEmailOnly", policy => policy.RequireClaim("EmailStatus","NotConfirmed"));
+            }
             );
             services.AddTransient<IDbService, DbService>();
             services.AddTransient<IEmailService, EmailService>();

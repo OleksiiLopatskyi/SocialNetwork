@@ -15,6 +15,8 @@ namespace SocialNetwork.Services
         Task<UserAccount> GetUserByUsername(SocialNetworkContext context,string userName);
         Task<UserAccount> RegisterUser(SocialNetworkContext context,RegisterViewModel model);
         Task<UserIdentity> GetUserIdentity(SocialNetworkContext context, UserAccount account);
-
+        Task<bool> CheckUserForEmailStatus(SocialNetworkContext context, UserAccount account);
+        Task<bool> isUserWithEmailExists(SocialNetworkContext context, RegisterViewModel model);
+        Task<bool> isUserWithUsernameExists(SocialNetworkContext context, RegisterViewModel model);
     }
 }
