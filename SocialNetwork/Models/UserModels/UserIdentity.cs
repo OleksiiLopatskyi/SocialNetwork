@@ -10,6 +10,10 @@ namespace SocialNetwork.Models.UserModels
         Confirmed,
         NotConfirmed
     }
+    public enum ResetPasswordStatus
+    {
+        Default,RequestForChange
+    }
     public class UserIdentity
     {
         public int Id { get; set; }
@@ -18,6 +22,7 @@ namespace SocialNetwork.Models.UserModels
         public string Password { get; set; }
         public EmailConfirm isEmailConfirmed { get; set; }
         public string VerificationCode { get; set; }
+        public ResetPasswordStatus ResetPasswordtStatus { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
     }

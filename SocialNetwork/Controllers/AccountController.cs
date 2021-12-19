@@ -174,20 +174,28 @@ namespace SocialNetwork.Controllers
             if (user != null)
             {
                 _emailService.SendVerificationEmailAsync(_db,email,EmailAction.ResetPassword,Request);
+                user.UserIdentity.ResetPasswordtStatus = ResetPasswordStatus.RequestForChange;
+                _db.UserAccounts.Update(user);
+                _db.SaveChanges();
                 return Json(new { success = true, message = "Success! Please check email" });
             }
             else return Json(new { success = false, message = "There are no user with this email" });
 
         }
         [HttpGet]
-        [Route("[controller]/[action]/{code}/{email}")]
+        [Route("[controller]/[action]/{code?}/{email?}")]
         public async Task<IActionResult> ResetPassword(string code,string email)
         {
-            if (User.Identity.IsAuthenticated||code==null)
+            UserAccount user = null;
+            if (email!=null || code != null)
+             user = await _dbService.GetUserByEmail(_db, email);
+            else return RedirectToAction("Index", "Home");
+
+            if (user.UserIdentity.ResetPasswordtStatus==ResetPasswordStatus.Default)
             {
                 return RedirectToAction("Index", "Home");
             }
-            var user = await _dbService.GetUserByEmail(_db, email);
+          
             if (code == user.UserIdentity.VerificationCode)
             {
                 ViewBag.User = user.UserIdentity.Username;
@@ -209,6 +217,7 @@ namespace SocialNetwork.Controllers
             if (ModelState.IsValid)
             {
                 user.UserIdentity.Password = model.NewPassword;
+                user.UserIdentity.ResetPasswordtStatus = ResetPasswordStatus.Default;
                 _db.UserAccounts.Update(user);
                 _db.SaveChanges();
                 return Json(new {success=true,message = "Changed"});

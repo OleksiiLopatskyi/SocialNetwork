@@ -38,7 +38,6 @@ namespace SocialNetwork.Models.Database
             string adminCountry = "Ukraine";
             string adminCity = "Lviv";
             UserStatus adminStatus = UserStatus.Free;
-
             Role adminRole = new Role() {Id=1,Name=adminRoleName};
             Role userRole = new Role() {Id=2,Name=userRoleName};
 
