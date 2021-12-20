@@ -191,10 +191,7 @@ namespace SocialNetwork.Controllers
              user = await _dbService.GetUserByEmail(_db, email);
             else return RedirectToAction("Index", "Home");
 
-            if (user.UserIdentity.ResetPasswordtStatus==ResetPasswordStatus.Default)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            if (user.UserIdentity.ResetPasswordtStatus==ResetPasswordStatus.Default) return RedirectToAction("Index", "Home");
           
             if (code == user.UserIdentity.VerificationCode)
             {
