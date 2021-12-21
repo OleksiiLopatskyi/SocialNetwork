@@ -46,7 +46,7 @@
 
                     <ul>
                         <li><span class="profile-stat-count">@Model.Item2.UserPosts.Count()</span> posts</li>
-                        <li><span class="profile-stat-count">@Model.Item2.UserFollowers.Count()</span> followers</li>
+                        <li><span  id="followers" class="profile-stat-count">@Model.Item2.UserFollowers.Count()</span> followers</li>
                         <li><span class="profile-stat-count">@Model.Item2.UserFollowing.Count()</span> following</li>
                     </ul>
 
@@ -310,29 +310,28 @@
                 if (json.follow === true) {
                     $("#Follow").text("Unfollow");
                     $("#Follow").css("background-color", "white");
-                    $("#Follow").attr("href", "UserPage/UnFollow");
-                } else {
-                    $("#Follow").attr("href", "UserPage/Follow");
                 }
             }
         })
         $("#Follow").click(function (e) {
             e.preventDefault();
             var username = document.getElementById("username").innerHTML;
-            var buttonUrl = $(this).attr("href");
            
             $.ajax({
                 type: "POST",
-                url: "/" + buttonUrl+"?username=" + username,
+                url: "/UserPage/Follow?username=" + username,
                 success: function (json) {
                     if (json.follow === true) {
-                        $("#Follow").text("Unfollow");
-                        $("#Follow").css("background-color", "white");
-                        $("#Follow").attr("href", "UserPage/UnFollow");
-                    } if(json.follow===false) {
-                        $("#Follow").text("Follow");
+                         if (json.follow === true) {
+                             $("#Follow").text("Unfollow");
+                             $("#Follow").css("background-color", "white");
+                             $("#followers").text(json.followers);
+                            }
+
+                    } else {
+                        $("#Follow").text("Follow").css("color","white");
                         $("#Follow").css("background-color", "#0095f6");
-                        $("#Follow").attr("href", "UserPage/Follow");
+                        $("#followers").text(json.followers);
                     }
                 }
             })

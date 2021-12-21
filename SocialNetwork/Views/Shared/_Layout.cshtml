@@ -118,7 +118,28 @@
             $("#listOfUsers").hide();
             $("#input").click(function (e) {
                 e.preventDefault();
+                var SetData = $("#listOfUsers");
                 $("#listOfUsers").toggle();
+                $.ajax({
+                    type: "POST",
+                    url:"/UserPage/Search",
+                    success: function (result) {
+                        SetData.html("");
+                        $.each(result.recentlyUsers, function (index, value) {
+
+
+                            var Data = '<a href="/UserPage/Profile/' + value.username + '">' + '<li class="clearfix"> ' +
+                                '                        <img style="width:45px;height:45px" src="' + value.imageUrl + '" alt = "avatar" > ' +
+                                '                        <div class="about"><div class="name">' + value.username + '</div><div class="status">' +
+                                '                        <i class="fa fa-circle offline"></i>' + '</div>' +
+                                '                        </div>' +
+                                '                    </li>' + '</a>';
+                            SetData.append(Data);
+
+                        })
+                    }
+
+                });
             });
             $("#input").keyup(function (e) {
                 e.preventDefault();
@@ -133,8 +154,8 @@
                     contentType: "html",
                     success: function (result) {
                         SetData.html("");
-                        if (result.length != 0) {
-                            $.each(result, function (index, value) {
+                        if (result.foundUsers.length != 0) {
+                            $.each(result.foundUsers, function (index, value) {
                                 
 
                                 var Data = '<a href="/UserPage/Profile/' + value.userIdentity.username + '">' + '<li class="clearfix"> ' +
@@ -147,7 +168,18 @@
 
                             })
                         } else {
-                            SetData.append('<h1 style="font-family: "Montserrat",sans-serif;position: absolute;top: 85px;left: 71px;">No results</h1>');
+                            $.each(result.recentlyUsers, function (index, value) {
+
+
+                                var data = '<a href="/UserPage/Profile/' + value.username + '">' + '<li class="clearfix"> ' +
+                                    '                        <img style="width:45px;height:45px" src="' + value.imageUrl + '" alt = "avatar" > ' +
+                                    '                        <div class="about"><div class="name">' + value.username + '</div><div class="status">' +
+                                    '                        <i class="fa fa-circle offline"></i>'+ '</div>' +
+                                    '                        </div>' +
+                                    '                    </li>' + '</a>';
+                                SetData.append(data);
+
+                            })
                         }
                         
                     }

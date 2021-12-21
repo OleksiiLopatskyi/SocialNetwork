@@ -32,6 +32,7 @@ namespace SocialNetwork.Services
                 .Include(i => i.UserChats)
                 .Include(i => i.UserFollowing)
                 .Include(i=>i.UserFollowers)
+                .Include(i=>i.RecentlyUsers)
                 .Include(i => i.UserInfo)
                 .FirstOrDefaultAsync(i => i.Id == userIdentity.Id);
             return userAccount;
@@ -106,22 +107,36 @@ namespace SocialNetwork.Services
             return user;
         }
 
-        public async Task<List<Follower>> GetFollowers(SocialNetworkContext context, string username)
+        public async Task<List<Follower>> GetFollowerList(SocialNetworkContext context, string username)
         {
             var user = await context.UserAccounts.FirstOrDefaultAsync(i=>i.UserIdentity.Username==username);
             return user.UserFollowing;
         }
 
-        public async Task<List<Follower>> GetFollowing(SocialNetworkContext context, string username)
+        public async Task<List<Follower>> GetFollowingList(SocialNetworkContext context, string username)
         {
-            var user = await context.UserAccounts.FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
+            var user = await context.UserAccounts.FirstOrDefaultAsync(i=>i.UserFollowing.FirstOrDefault(i=>i.Username==username).Username==username);
+
             return user.UserFollowing;
         }
 
-        public async Task<Follower> GetFollower(SocialNetworkContext context, string username)
+        public async Task<Follower> GetFollower(SocialNetworkContext context, string username,string followerName)
         {
-            var user = await context.UserAccounts.FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
-            var follower = user.UserFollowers.FirstOrDefault(i=>i.Username==username);
+            var user = await context.UserAccounts.Include(i=>i.UserFollowers).FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
+            var follower = user.UserFollowers.FirstOrDefault(i=>i.Username==followerName);
+            return follower;
+        }
+        public async Task<bool> isFollowingAsync(SocialNetworkContext context, string username, string followerName)
+        {
+            var user = await context.UserAccounts.Include(i => i.UserFollowers).FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
+            var follower = user.UserFollowing.FirstOrDefault(i => i.Username == followerName);
+            if (follower == null) return false;
+            else return true;
+        }
+        public async Task<Follower> GetFollowing(SocialNetworkContext context, string username,string followerName)
+        {
+            var user = await context.UserAccounts.Include(i=>i.UserFollowing).FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
+            var follower = user.UserFollowing.FirstOrDefault(i => i.Username == followerName);
             return follower;
         }
     }

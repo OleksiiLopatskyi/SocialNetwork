@@ -19,8 +19,10 @@ namespace SocialNetwork.Services
         Task<bool> CheckUserForEmailStatus(SocialNetworkContext context, UserAccount account);
         Task<bool> isUserWithEmailExists(SocialNetworkContext context, RegisterViewModel model);
         Task<bool> isUserWithUsernameExists(SocialNetworkContext context, RegisterViewModel model);
-        Task<Follower> GetFollower(SocialNetworkContext context, string username);
-        Task<List<Follower>> GetFollowers(SocialNetworkContext context, string username);
-        Task<List<Follower>> GetFollowing(SocialNetworkContext context, string username);
+        Task<Follower> GetFollower(SocialNetworkContext context, string username, string followerName);
+        Task<List<Follower>> GetFollowerList(SocialNetworkContext context, string username);
+        Task<List<Follower>> GetFollowingList(SocialNetworkContext context, string username);
+        Task<Follower> GetFollowing(SocialNetworkContext context, string username, string followerName);
+        Task<bool> isFollowingAsync(SocialNetworkContext context, string username, string followerName);
     }
 }

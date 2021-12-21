@@ -28,14 +28,17 @@ namespace SocialNetwork.Controllers
         }
         public async Task<IActionResult> Search(string value)
         {
+            var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
             var users = await _db.UserAccounts.Include(i=>i.UserInfo).Include(i => i.UserIdentity).Where(i=>i.UserIdentity.Username.Contains(value)).ToListAsync();
-            return Json(users);
+           
+            return Json(new {foundUsers = users,recentlyUsers=user.RecentlyUsers.OrderByDescending(i=>i.Id)});
         }
         [Route("[controller]/[action]/{name}")]
         public async Task<IActionResult> Profile(string name)
         {
             var logedInUser = await _dbService.GetUserByUsername(_db,User.Identity.Name);
             var user = await _dbService.GetUserByUsername(_db,name);
+            logedInUser.AddRecentlyUser(_db,user);
             var model = (logedInUser,user);
             return View(model);
         }
@@ -43,32 +46,19 @@ namespace SocialNetwork.Controllers
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
             var userToFollow = await _dbService.GetUserByUsername(_db,username);
-
-            var following = new Follower { ImageUrl = userToFollow.UserInfo.ProfileImage,
-                Username = userToFollow.UserIdentity.Username };
-            var follower = new Follower { ImageUrl = user.UserInfo.ProfileImage,
-                Username = user.UserIdentity.Username };
-            user.UserFollowing.Add(following);
-            userToFollow.UserFollowers.Add(follower);
-            _db.UserAccounts.Update(user);
-            _db.UserAccounts.Update(userToFollow);
-            _db.SaveChanges();
-            return Json(new {success=true,Follow=true});
-        }
-        public async Task<IActionResult> UnFollow(string username)
-        {
-            var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
-            var userToFollow = await _dbService.GetUserByUsername(_db, username);
-            var followwing = await _dbService.GetFollower(_db,userToFollow.UserIdentity.Username);
-            var follower = await _dbService.GetFollower(_db, user.UserIdentity.Username);
-
-            user.UserFollowing.Remove(followwing);
-            userToFollow.UserFollowers.Remove(follower);
-            _db.UserAccounts.Update(user);
-            _db.SaveChanges();
-            _db.UserAccounts.Update(userToFollow);
-            _db.SaveChanges();
-            return Json(new { success = true, Follow = false });
+            var isFollowing = await _dbService.isFollowingAsync(_db,user.UserIdentity.Username,username);
+            if (isFollowing)
+            {
+               user.RemoveFromFollowing(_db,userToFollow);
+               userToFollow.RemoveFromFollowers(_db, user);
+               return Json(new { success = true, Follow = false, followers = userToFollow.UserFollowers.Count() });
+            }
+            else
+            {
+                user.AddToFollowing(_db, userToFollow);
+                userToFollow.AddToFollowers(_db, user);
+                return Json(new { success = true, Follow = true, followers = userToFollow.UserFollowers.Count()});
+            }
         }
         public async Task<IActionResult> GetUserInfo(string username)
         {
@@ -79,12 +69,12 @@ namespace SocialNetwork.Controllers
         }
         public async Task<IActionResult> Followers(string username)
         {
-            var followers = await _dbService.GetFollowers(_db,username);
+            var followers = await _dbService.GetFollowerList(_db,username);
             return Json(followers);
         }
         public async Task<IActionResult> Following(string username)
         {
-            var followers = await _dbService.GetFollowers(_db, username);
+            var followers = await _dbService.GetFollowingList(_db, username);
             return Json(followers);
         }
     }
