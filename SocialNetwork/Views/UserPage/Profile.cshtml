@@ -26,7 +26,7 @@
 
                 <div class="profile-user-settings" style="display:flex">
 
-                    <h1 class="profile-user-name">@Model.Item2.UserIdentity.Username</h1>
+                    <h1 id="username" class="profile-user-name">@Model.Item2.UserIdentity.Username</h1>
 
                     @if (User.Identity.Name == Model.Item2.UserIdentity.Username)
                     {
@@ -36,7 +36,7 @@
                     }
                     else
                     {
-                        <a asp-action="Follow" style="height: 32px; display: flex; width: 105px; background-color: #0095f6; justify-content: center; flex-direction: column;" class="btn profile-edit-btn"><span style="color:white">Follow</span></a>
+                        <a id="Follow" asp-action="Follow" style="height: 32px; display: flex; width: 105px; background-color: #0095f6; justify-content: center; flex-direction: column;" class="btn profile-edit-btn"><span style="color:white">Follow</span></a>
                     }
 
 
@@ -45,9 +45,9 @@
                 <div class="profile-stats">
 
                     <ul>
-                        <li><span class="profile-stat-count">164</span> posts</li>
-                        <li><span class="profile-stat-count">188</span> followers</li>
-                        <li><span class="profile-stat-count">206</span> following</li>
+                        <li><span class="profile-stat-count">@Model.Item2.UserPosts.Count()</span> posts</li>
+                        <li><span class="profile-stat-count">@Model.Item2.UserFollowers.Count()</span> followers</li>
+                        <li><span class="profile-stat-count">@Model.Item2.UserFollowing.Count()</span> following</li>
                     </ul>
 
                 </div>
@@ -300,4 +300,43 @@
 
 
 </body>
-
+@section scripts{ 
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/UserPage/GetUserInfo?username=" + document.getElementById("username").innerHTML,
+            success: function (json) {
+                if (json.follow === true) {
+                    $("#Follow").text("Unfollow");
+                    $("#Follow").css("background-color", "white");
+                    $("#Follow").attr("href", "UserPage/UnFollow");
+                } else {
+                    $("#Follow").attr("href", "UserPage/Follow");
+                }
+            }
+        })
+        $("#Follow").click(function (e) {
+            e.preventDefault();
+            var username = document.getElementById("username").innerHTML;
+            var buttonUrl = $(this).attr("href");
+           
+            $.ajax({
+                type: "POST",
+                url: "/" + buttonUrl+"?username=" + username,
+                success: function (json) {
+                    if (json.follow === true) {
+                        $("#Follow").text("Unfollow");
+                        $("#Follow").css("background-color", "white");
+                        $("#Follow").attr("href", "UserPage/UnFollow");
+                    } if(json.follow===false) {
+                        $("#Follow").text("Follow");
+                        $("#Follow").css("background-color", "#0095f6");
+                        $("#Follow").attr("href", "UserPage/Follow");
+                    }
+                }
+            })
+        })
+    })
+</script>
+}
