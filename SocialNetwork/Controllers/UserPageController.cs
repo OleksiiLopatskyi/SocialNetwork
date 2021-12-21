@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SocialNetwork.Models.Database;
 using SocialNetwork.Models.UserModels;
 using SocialNetwork.Services;
@@ -24,6 +25,19 @@ namespace SocialNetwork.Controllers
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
             return View(user);
+        }
+        public async Task<IActionResult> Search(string value)
+        {
+            var users = await _db.UserAccounts.Include(i=>i.UserInfo).Include(i => i.UserIdentity).Where(i=>i.UserIdentity.Username.Contains(value)).ToListAsync();
+            return Json(users);
+        }
+        [Route("[controller]/[action]/{name}")]
+        public async Task<IActionResult> Profile(string name)
+        {
+            var logedInUser = await _dbService.GetUserByUsername(_db,User.Identity.Name);
+            var user = await _dbService.GetUserByUsername(_db,name);
+            var model = (logedInUser,user);
+            return View(model);
         }
     }
 }

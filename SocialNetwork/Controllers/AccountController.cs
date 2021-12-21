@@ -99,7 +99,7 @@ namespace SocialNetwork.Controllers
                 {
                     var registeredUser = await _dbService.RegisterUser(_db, model);
                     await Authenticate(registeredUser.UserIdentity);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "UserPage");
                 }
 
 
@@ -137,7 +137,7 @@ namespace SocialNetwork.Controllers
             }
             else
             {
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index","UserPage");
             }
             
         }
@@ -159,7 +159,7 @@ namespace SocialNetwork.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "UserPage");
             }
             return View();
         }
@@ -168,7 +168,7 @@ namespace SocialNetwork.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "UsePage");
             }
             var user = await _dbService.GetUserByEmail(_db,email);
             if (user != null)
@@ -189,7 +189,7 @@ namespace SocialNetwork.Controllers
             UserAccount user = null;
             if (email!=null || code != null)
              user = await _dbService.GetUserByEmail(_db, email);
-            else return RedirectToAction("Index", "Home");
+            else return RedirectToAction("Index", "UserPage");
 
             if (user.UserIdentity.ResetPasswordtStatus==ResetPasswordStatus.Default) return RedirectToAction("Index", "Home");
           
@@ -208,7 +208,7 @@ namespace SocialNetwork.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("Index","UserPage");
             }
             var user = await _dbService.GetUserByUsername(_db,model.Username);
             if (ModelState.IsValid)
