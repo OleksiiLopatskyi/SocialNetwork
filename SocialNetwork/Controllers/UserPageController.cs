@@ -49,14 +49,14 @@ namespace SocialNetwork.Controllers
             var isFollowing = await _dbService.isFollowingAsync(_db,user.UserIdentity.Username,username);
             if (isFollowing)
             {
-               user.RemoveFromFollowing(_db,userToFollow);
-               userToFollow.RemoveFromFollowers(_db, user);
+               await user.RemoveFromFollowing(_db,userToFollow);
+               await userToFollow .RemoveFromFollowers(_db, user);
                return Json(new { success = true, Follow = false, followers = userToFollow.UserFollowers.Count() });
             }
             else
             {
-                user.AddToFollowing(_db, userToFollow);
-                userToFollow.AddToFollowers(_db, user);
+                await user.AddToFollowing(_db, userToFollow);
+                await userToFollow .AddToFollowers(_db, user);
                 return Json(new { success = true, Follow = true, followers = userToFollow.UserFollowers.Count()});
             }
         }

@@ -109,14 +109,13 @@ namespace SocialNetwork.Services
 
         public async Task<List<Follower>> GetFollowerList(SocialNetworkContext context, string username)
         {
-            var user = await context.UserAccounts.FirstOrDefaultAsync(i=>i.UserIdentity.Username==username);
-            return user.UserFollowing;
+            var user = await context.UserAccounts.Include(i=>i.UserFollowers).FirstOrDefaultAsync(i=>i.UserIdentity.Username==username);
+            return user.UserFollowers;
         }
 
         public async Task<List<Follower>> GetFollowingList(SocialNetworkContext context, string username)
         {
-            var user = await context.UserAccounts.FirstOrDefaultAsync(i=>i.UserFollowing.FirstOrDefault(i=>i.Username==username).Username==username);
-
+            var user = await context.UserAccounts.Include(i => i.UserFollowing).FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
             return user.UserFollowing;
         }
 
