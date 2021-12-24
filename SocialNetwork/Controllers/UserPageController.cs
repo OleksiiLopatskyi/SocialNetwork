@@ -21,11 +21,14 @@ namespace SocialNetwork.Controllers
             _db = context;
             _dbService = dbService;
         }
+        //Index
         public async Task<IActionResult> Index()
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
             return View(user);
         }
+
+        //Search
         public async Task<IActionResult> Search(string value)
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
@@ -33,6 +36,8 @@ namespace SocialNetwork.Controllers
            
             return Json(new {foundUsers = users,recentlyUsers=user.RecentlyUsers.OrderByDescending(i=>i.Id)});
         }
+
+        //Profile
         [Route("[controller]/[action]/{name}")]
         public async Task<IActionResult> Profile(string name)
         {
@@ -42,6 +47,7 @@ namespace SocialNetwork.Controllers
             var model = (logedInUser,user);
             return View(model);
         }
+
         public async Task<IActionResult> Follow(string username)
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
@@ -60,6 +66,7 @@ namespace SocialNetwork.Controllers
                 return Json(new { success = true, Follow = true, followers = userToFollow.UserFollowers.Count()});
             }
         }
+
         public async Task<IActionResult> GetUserInfo(string username)
         {
             var logedInUser = await _dbService.GetUserByUsername(_db,User.Identity.Name);
@@ -72,6 +79,7 @@ namespace SocialNetwork.Controllers
             var followers = await _dbService.GetFollowerList(_db,username);
             return Json(followers);
         }
+
         public async Task<IActionResult> Following(string username)
         {
             var followers = await _dbService.GetFollowingList(_db, username);

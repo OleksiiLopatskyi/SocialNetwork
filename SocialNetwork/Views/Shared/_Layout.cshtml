@@ -34,14 +34,16 @@
 
             <div class="header__search">
                 <input id="input" type="text" placeholder="Search">
+                <img id="searchLoader" style="position: absolute; width: 15px; right: 8px;" src="~/Img/loading-instagram.gif" />
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M21.669 21.6543C21.8625 21.4622 21.863 21.1494 21.6703 20.9566L17.3049 16.5913C18.7912 14.9327 19.7017 12.7525 19.7017 10.3508C19.7017 5.18819 15.5135 1 10.3508 1C5.18819 1 1 5.18819 1 10.3508C1 15.5135 5.18819 19.7017 10.3508 19.7017C12.7624 19.7017 14.9475 18.7813 16.606 17.2852L20.9739 21.653C21.1657 21.8449 21.4765 21.8454 21.669 21.6543ZM1.9843 10.3508C1.9843 5.7394 5.7394 1.9843 10.3508 1.9843C14.9623 1.9843 18.7174 5.7394 18.7174 10.3508C18.7174 14.9623 14.9623 18.7174 10.3508 18.7174C5.7394 18.7174 1.9843 14.9623 1.9843 10.3508Z" fill="#A5A5A5" stroke="#A5A5A5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 <div id="plist" style="background-color: white;overflow-y:scroll; position: absolute; top: 30px;left:-35px;box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 20%);" class="people-list">
-                <ul id="listOfUsers" style="width:290px;height:200px" class="list-unstyled chat-list mt-2 mb-0">
-                </ul>
-            </div>
+                    <img id="searchRecentlyUsersLoader" style="position: absolute; width: 25px; top: 70px; right: 120px;" src="~/Img/loading-instagram.gif" />
+                    <ul id="listOfUsers" style="width:290px;height:200px" class="list-unstyled chat-list mt-2 mb-0">
+                    </ul>
                 </div>
+            </div>
             <div class="header__buttons header__buttons--mobile">
                 <a href="#">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,6 +63,7 @@
                         <path d="M10.1498 8.7952C10.2222 8.80563 10.2825 8.81606 10.3548 8.82649C11.428 9.05591 12.5252 10.0362 13.3693 10.6202C13.8396 10.9539 14.2375 10.9226 14.7078 10.6097C15.7086 9.92147 16.7456 9.26448 17.7705 8.58664C18.0478 8.39893 18.3372 8.20079 18.6748 8.45107C19.0486 8.7222 18.8195 9.0142 18.6266 9.28534C17.6137 10.6827 16.6129 12.0801 15.588 13.4671C14.8886 14.4265 13.8999 14.5621 12.8388 13.8842C12.1032 13.4045 11.3436 12.9561 10.6201 12.4556C10.1378 12.1219 9.73984 12.1636 9.28163 12.4764C8.26876 13.1647 7.24382 13.8217 6.21889 14.4995C5.94156 14.6872 5.65216 14.8854 5.31454 14.6247C4.97691 14.3744 5.15778 14.0928 5.33865 13.8321C6.3877 12.393 7.42469 10.9539 8.47374 9.51476C8.82343 9.02463 9.47456 8.73263 10.1498 8.7952Z" fill="var(--text-dark)" />
                     </svg>
                 </a>
+
             </div>
 
             <div class="header__buttons header__buttons--desktop">
@@ -89,7 +92,9 @@
                         <path d="M11.4995 21.2609C11.1062 21.2609 10.7307 21.1362 10.4133 20.9001C8.2588 19.3012 3.10938 15.3239 1.81755 12.9143C0.127895 9.76543 1.14258 5.72131 4.07489 3.89968C5.02253 3.31177 6.09533 3 7.18601 3C8.81755 3 10.3508 3.66808 11.4995 4.85726C12.6483 3.66808 14.1815 3 15.8131 3C16.9038 3 17.9766 3.31177 18.9242 3.89968C21.8565 5.72131 22.8712 9.76543 21.186 12.9143C19.8942 15.3239 14.7448 19.3012 12.5902 20.9001C12.2684 21.1362 11.8929 21.2609 11.4995 21.2609ZM7.18601 4.33616C6.34565 4.33616 5.5187 4.57667 4.78562 5.03096C2.43888 6.49183 1.63428 9.74316 2.99763 12.2819C4.19558 14.5177 9.58639 18.6242 11.209 19.8267C11.3789 19.9514 11.6158 19.9514 11.7856 19.8267C13.4082 18.6197 18.799 14.5133 19.997 12.2819C21.3603 9.74316 20.5557 6.48738 18.209 5.03096C17.4804 4.57667 16.6534 4.33616 15.8131 4.33616C14.3425 4.33616 12.9657 5.04878 12.0359 6.28696L11.4995 7.00848L10.9631 6.28696C10.0334 5.04878 8.6611 4.33616 7.18601 4.33616Z" fill="var(--text-dark)" stroke="var(--text-dark)" stroke-width="0.6" />
                     </svg>
                 </a>
-
+                <span id="addPostIcon" style="cursor:pointer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" aria-label="Новий допис" color="#262626" fill="#262626" role="img"><path d="M2 12v3.45c0 2.849.698 4.005 1.606 4.944.94.909 2.098 1.608 4.946 1.608h6.896c2.848 0 4.006-.7 4.946-1.608C21.302 19.455 22 18.3 22 15.45V8.552c0-2.849-.698-4.006-1.606-4.945C19.454 2.7 18.296 2 15.448 2H8.552c-2.848 0-4.006.699-4.946 1.607C2.698 4.547 2 5.703 2 8.552z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="6.545" x2="17.455" y1="12.001" y2="12.001"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="12.003" x2="12.003" y1="6.545" y2="17.455"></line></svg>
+                </span>
                 <a asp-action="Profile" asp-route-name="@User.Identity.Name" class="profile-button">
                     <div class="profile-button__border"></div>
                     <div class="profile-button__picture">
@@ -100,6 +105,25 @@
         </nav>
 
     </header>
+    <div id="createPostPopupBG">
+        <div id="addPostForm">
+            <div class="mb-3">
+                <form>
+                    <input style="" multiple class="form-control" type="file" id="formFileMultiple">
+
+                    <div id="ChooseFilesButton">
+                        <span>Choose photos</span>
+                    </div>
+                </form>
+
+                <svg aria-label="Значок медіафайлу, як-от зображення або відео" class="_8-yf5 " color="#262626" fill="#262626" height="77" role="img" viewBox="0 0 97.6 77.3" width="96">
+                <path d="M16.3 24h.3c2.8-.2 4.9-2.6 4.8-5.4-.2-2.8-2.6-4.9-5.4-4.8s-4.9 2.6-4.8 5.4c.1 2.7 2.4 4.8 5.1 4.8zm-2.4-7.2c.5-.6 1.3-1 2.1-1h.2c1.7 0 3.1 1.4 3.1 3.1 0 1.7-1.4 3.1-3.1 3.1-1.7 0-3.1-1.4-3.1-3.1 0-.8.3-1.5.8-2.1z" fill="currentColor"></path>
+                <path d="M84.7 18.4L58 16.9l-.2-3c-.3-5.7-5.2-10.1-11-9.8L12.9 6c-5.7.3-10.1 5.3-9.8 11L5 51v.8c.7 5.2 5.1 9.1 10.3 9.1h.6l21.7-1.2v.6c-.3 5.7 4 10.7 9.8 11l34 2h.6c5.5 0 10.1-4.3 10.4-9.8l2-34c.4-5.8-4-10.7-9.7-11.1zM7.2 10.8C8.7 9.1 10.8 8.1 13 8l34-1.9c4.6-.3 8.6 3.3 8.9 7.9l.2 2.8-5.3-.3c-5.7-.3-10.7 4-11 9.8l-.6 9.5-9.5 10.7c-.2.3-.6.4-1 .5-.4 0-.7-.1-1-.4l-7.8-7c-1.4-1.3-3.5-1.1-4.8.3L7 49 5.2 17c-.2-2.3.6-4.5 2-6.2zm8.7 48c-4.3.2-8.1-2.8-8.8-7.1l9.4-10.5c.2-.3.6-.4 1-.5.4 0 .7.1 1 .4l7.8 7c.7.6 1.6.9 2.5.9.9 0 1.7-.5 2.3-1.1l7.8-8.8-1.1 18.6-21.9 1.1zm76.5-29.5l-2 34c-.3 4.6-4.3 8.2-8.9 7.9l-34-2c-4.6-.3-8.2-4.3-7.9-8.9l2-34c.3-4.4 3.9-7.9 8.4-7.9h.5l34 2c4.7.3 8.2 4.3 7.9 8.9z" fill="currentColor"></path>
+                <path d="M78.2 41.6L61.3 30.5c-2.1-1.4-4.9-.8-6.2 1.3-.4.7-.7 1.4-.7 2.2l-1.2 20.1c-.1 2.5 1.7 4.6 4.2 4.8h.3c.7 0 1.4-.2 2-.5l18-9c2.2-1.1 3.1-3.8 2-6-.4-.7-.9-1.3-1.5-1.8zm-1.4 6l-18 9c-.4.2-.8.3-1.3.3-.4 0-.9-.2-1.2-.4-.7-.5-1.2-1.3-1.1-2.2l1.2-20.1c.1-.9.6-1.7 1.4-2.1.8-.4 1.7-.3 2.5.1L77 43.3c1.2.8 1.5 2.3.7 3.4-.2.4-.5.7-.9.9z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
     
     @RenderBody()
 
@@ -110,19 +134,25 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-       
+
         $(document).ready(function () {
             var src = $("#profileImageSrc").text();
-
+            $("#createPostPopupBG").hide();
+            $("#searchLoader").hide();
+            $("#searchRecentlyUsersLoader").hide();
             $("#profileImage").attr("src", src);
             $("#listOfUsers").hide();
             $("#input").click(function (e) {
                 e.preventDefault();
                 var SetData = $("#listOfUsers");
                 $("#listOfUsers").toggle();
+                if (SetData.children().length < 1) {
+                    $("#searchRecentlyUsersLoader").show();
+                }
+
                 $.ajax({
                     type: "POST",
-                    url:"/UserPage/Search",
+                    url: "/UserPage/Search",
                     success: function (result) {
                         SetData.html("");
                         $.each(result.recentlyUsers, function (index, value) {
@@ -135,6 +165,7 @@
                                 '                        </div>' +
                                 '                    </li>' + '</a>';
                             SetData.append(Data);
+                            $("#searchRecentlyUsersLoader").hide();
 
                         })
                     }
@@ -143,11 +174,11 @@
             });
             $("#input").keyup(function (e) {
                 e.preventDefault();
-               
+
                 var searchValue = $("input").val();
                 var SetData = $("#listOfUsers");
-             
-              
+
+                $("#searchLoader").show();
                 $.ajax({
                     type: "POST",
                     url: "/UserPage/Search?value=" + searchValue,
@@ -156,7 +187,7 @@
                         SetData.html("");
                         if (result.foundUsers.length != 0) {
                             $.each(result.foundUsers, function (index, value) {
-                                
+
 
                                 var Data = '<a href="/UserPage/Profile/' + value.userIdentity.username + '">' + '<li class="clearfix"> ' +
                                     '                        <img style="width:45px;height:45px" src="' + value.userInfo.profileImage + '" alt = "avatar" > ' +
@@ -165,6 +196,7 @@
                                     '                        </div>' +
                                     '                    </li>' + '</a>';
                                 SetData.append(Data);
+                                $("#searchLoader").hide();
 
                             })
                         } else {
@@ -174,18 +206,45 @@
                                 var data = '<a href="/UserPage/Profile/' + value.username + '">' + '<li class="clearfix"> ' +
                                     '                        <img style="width:45px;height:45px" src="' + value.imageUrl + '" alt = "avatar" > ' +
                                     '                        <div class="about"><div class="name">' + value.username + '</div><div class="status">' +
-                                    '                        <i class="fa fa-circle offline"></i>'+ '</div>' +
+                                    '                        <i class="fa fa-circle offline"></i>' + '</div>' +
                                     '                        </div>' +
                                     '                    </li>' + '</a>';
                                 SetData.append(data);
+                                $("#searchLoader").hide();
 
                             })
                         }
-                        
+
                     }
                 })
             })
+            $("#addPostIcon").click(function (e) {
+                e.stopPropagation();
+                $("#createPostPopupBG").fadeToggle();
+            })
+            $("#photosPostForm").on("change", function () {
+                alert("changed");
+            });
 
+
+
+            var input = $("#formFileMultiple");
+            var files = [];
+
+            input.change(function () {
+
+                for (var i = 0; i < input[0].files.length; i++) {
+                    files.push(input[0].files[i]);
+                }
+                sessionStorage.setItem("photo", JSON.stringify(files));
+            })
+
+            $("#ChooseFilesButton").click(function (e) {
+      
+                var request = new XMLHttpRequest();
+                var form = new FormData();
+                console.log(files[2]);
+            });
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

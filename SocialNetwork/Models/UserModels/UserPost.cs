@@ -8,7 +8,7 @@ namespace SocialNetwork.Models.UserModels
     public class UserPost
     {
         public int Id { get; set; }
-        public byte[] Image { get; set; }
+        public List<ImagePost> Images { get; set; }
         public string Location { get; set; }
         public string Description { get; set; }
         public List<Like> Likes { get; set; }
@@ -18,6 +18,7 @@ namespace SocialNetwork.Models.UserModels
         {
             Likes = new List<Like>();
             Comments = new List<Comment>();
+            Images = new List<ImagePost>();
         }
 
     }

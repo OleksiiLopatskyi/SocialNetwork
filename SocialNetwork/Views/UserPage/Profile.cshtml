@@ -307,8 +307,23 @@
 </body>
 @section scripts{ 
 <script>
-    $(document).ready(function () {
+    function FollowButtonValue(value) {
+        if (value === "Follow") {
+            $("#Follow").text("Unfollow").css("color","black");
+            $("#Follow").css("background-color", "white");
+         
+        } else {
+            $("#Follow").text("Follow").css("color", "white");
+            $("#Follow").css("background-color", "#0095f6");
+         
+        }
+    }
+    function hideWhileLoading() {
         $(".jumbotron").hide();
+        $("#Follow").hide();
+    }
+    $(document).ready(function () {
+        hideWhileLoading();
         $.ajax({
             type: "GET",
             url: "/UserPage/GetUserInfo?username=" + document.getElementById("username").innerHTML,
@@ -317,27 +332,29 @@
                     $("#Follow").text("Unfollow");
                     $("#Follow").css("background-color", "white");
                 }
+                $("#Follow").fadeIn();
             }
         })
         $("#Follow").click(function (e) {
             e.preventDefault();
             var username = document.getElementById("username").innerHTML;
-           
+            var FollowButtonText = $("#Follow").text();
+            $("#Follow").fadeOut();
             $.ajax({
                 type: "POST",
                 url: "/UserPage/Follow?username=" + username,
                 success: function (json) {
                     if (json.follow === true) {
                          if (json.follow === true) {
-                             $("#Follow").text("Unfollow");
-                             $("#Follow").css("background-color", "white");
                              $("#followers").text(json.followers);
+                             FollowButtonValue(FollowButtonText);
+                             $("#Follow").fadeIn();
                             }
-
                     } else {
-                        $("#Follow").text("Follow").css("color","white");
-                        $("#Follow").css("background-color", "#0095f6");
+                        FollowButtonValue(FollowButtonText);
                         $("#followers").text(json.followers);
+                        $("#Follow").fadeIn();
+
                     }
                 }
             })
@@ -403,7 +420,6 @@
             }
            
         })
-
         $("#closeFollowers").click(function (e) {
             e.preventDefault();
             $(".jumbotron").hide();
