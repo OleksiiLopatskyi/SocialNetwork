@@ -8,6 +8,7 @@ namespace SocialNetwork.Models.UserModels
     public class UserPost
     {
         public int Id { get; set; }
+        public int UserAccountId { get; set; }
         public List<ImagePost> Images { get; set; }
         public string Location { get; set; }
         public string Title { get; set; }

@@ -31,10 +31,10 @@ namespace SocialNetwork.Services
             var userAccount = await context.UserAccounts
                 .Include(i => i.UserChats)
                 .Include(i => i.UserFollowing)
-                .Include(i=>i.UserFollowers)
-                .Include(i=>i.RecentlyUsers)
+                .Include(i => i.UserFollowers)
+                .Include(i => i.RecentlyUsers)
                 .Include(i => i.UserInfo)
-                .Include(i=>i.UserPosts)
+                .Include(i => i.UserPosts).ThenInclude(i => i.Images)
                 .FirstOrDefaultAsync(i => i.Id == userIdentity.Id);
             return userAccount;
         }
@@ -140,9 +140,10 @@ namespace SocialNetwork.Services
             return follower;
         }
 
-        public void CreatePost(SocialNetworkContext context, UserPost post,UserAccount account)
+        public  void CreatePost(SocialNetworkContext context, UserPost post,UserAccount account)
         {
             account.UserPosts.Add(post);
+            var posts =  context.UserPosts.Include(i => i.Images).FirstOrDefaultAsync(i=>i.UserAccountId==account.Id&&i.Id==post.Id);
             context.Update(account);
             context.SaveChanges();
         }
