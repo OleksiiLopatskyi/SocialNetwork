@@ -34,6 +34,7 @@ namespace SocialNetwork.Services
                 .Include(i=>i.UserFollowers)
                 .Include(i=>i.RecentlyUsers)
                 .Include(i => i.UserInfo)
+                .Include(i=>i.UserPosts)
                 .FirstOrDefaultAsync(i => i.Id == userIdentity.Id);
             return userAccount;
         }
@@ -137,6 +138,13 @@ namespace SocialNetwork.Services
             var user = await context.UserAccounts.Include(i=>i.UserFollowing).FirstOrDefaultAsync(i => i.UserIdentity.Username == username);
             var follower = user.UserFollowing.FirstOrDefault(i => i.Username == followerName);
             return follower;
+        }
+
+        public void CreatePost(SocialNetworkContext context, UserPost post,UserAccount account)
+        {
+            account.UserPosts.Add(post);
+            context.Update(account);
+            context.SaveChanges();
         }
     }
 }

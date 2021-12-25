@@ -10,6 +10,6 @@ namespace SocialNetwork.ViewModels
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public List<IFormFile> Photos { get; set; }
+        public List<string> Photos { get; set; }
     }
 }

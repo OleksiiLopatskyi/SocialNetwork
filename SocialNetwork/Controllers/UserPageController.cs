@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SocialNetwork.Models.Database;
 using SocialNetwork.Models.UserModels;
 using SocialNetwork.Services;
+using SocialNetwork.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,10 +20,12 @@ namespace SocialNetwork.Controllers
     {
         private SocialNetworkContext _db;
         private IDbService _dbService;
-        public UserPageController(SocialNetworkContext context,IDbService dbService)
+        private readonly IWebHostEnvironment environment;
+        public UserPageController(SocialNetworkContext context,IDbService dbService,IWebHostEnvironment env)
         {
             _db = context;
             _dbService = dbService;
+            environment = env;
         }
         //Index
         public async Task<IActionResult> Index()
@@ -85,5 +91,45 @@ namespace SocialNetwork.Controllers
             var followers = await _dbService.GetFollowingList(_db, username);
             return Json(followers);
         }
+        public async Task<IActionResult> CreatePost()
+        {
+            var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
+            var userName = user.UserIdentity.Username;
+           
+            var pathImage =string.Empty;
+
+            var postInfo = HttpContext.Request.Form;
+            var postTitle = postInfo["Title"].First();
+            var postDescription = postInfo["Description"].First();
+            IFormFileCollection files = postInfo.Files;
+            var pathFolder = $@"{environment.WebRootPath}\Uploads\Posts\{userName}\{postTitle}";
+            bool isPathExists = Directory.Exists(pathFolder);
+            if (!isPathExists)
+            {
+                Directory.CreateDirectory(pathFolder);
+            }
+            UserPost post = new UserPost()
+            {
+                Title = postTitle,
+                Description=postDescription
+            };
+
+            foreach (var item in files)
+            {
+                pathImage = $@"{pathFolder}\{item.FileName}";
+                ImagePost image = new ImagePost
+                {
+                    Url = pathImage
+                };
+                post.Images.Add(image);
+                using (Stream fileStream = new FileStream(pathImage, FileMode.Create))
+                {
+                    await item.CopyToAsync(fileStream);
+                }
+            }
+            _dbService.CreatePost(_db,post,user);
+            return Json(new {path=isPathExists});
+        }
+       
     }
 }
