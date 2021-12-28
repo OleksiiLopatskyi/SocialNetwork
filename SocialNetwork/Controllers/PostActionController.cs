@@ -37,5 +37,10 @@ namespace SocialNetwork.Controllers
             await _postSevice.CommentAsync(_db,post,user,text);
             return Json(new {success=true});
         }
+        public async Task<IActionResult> ShowComments(int postId)
+        {
+            var post = await _dbService.GetPostById(_db,postId);
+            return Json(new {comments=post.Comments});
+        }
     }
 }

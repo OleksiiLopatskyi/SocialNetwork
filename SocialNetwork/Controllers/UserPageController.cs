@@ -44,7 +44,7 @@ namespace SocialNetwork.Controllers
         public async Task<IActionResult> Search(string value)
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
-            var users = await _db.UserAccounts.Include(i=>i.UserInfo).Include(i => i.UserIdentity).Where(i=>i.UserIdentity.Username.Contains(value)).ToListAsync();
+            var users = await _db.UserAccounts.Include(i=>i.UserInfo).Include(i => i.UserIdentity).Where(i=>i.UserIdentity.Username.Contains(value)&&i.UserIdentity.Username!=user.UserIdentity.Username).ToListAsync();
             return Json(new {foundUsers = users,recentlyUsers=user.RecentlyUsers.OrderByDescending(i=>i.Id)});
         }
 

@@ -187,8 +187,40 @@ function addComment(postId) {
         type: "POST",
         url: "PostAction/Comment?text=" + commentText + "&postId=" + postId,
         success: function (json) {
-
+            $(commentFieldId).val("");
         }
     })
 
+}
+function openComments(postId) {
+    $("#Comments").removeAttr("hidden");
+    var SetData = $("#Comments");
+    SetData.html(`            <img style="width:25px;height:25px;position:absolute;right:10px;top:10px;cursor:pointer" onclick="closeComments()" src="/Img/close.png"/>
+`);
+    $.ajax({
+        type: "POST",
+        url: "/PostAction/ShowComments?postId=" + postId,
+        success: function (json) {
+            $.each(json.comments, function (index, value) {
+                var result = `<div id="comment">
+                <div id="commentContent">
+                    <div id="commentFromImage">
+                        <img src="${value.userFrom.imageUrl}" />
+                    </div>
+                <span id="commentFromUsername">${value.userFrom.username}</span>
+                <div id="commentMessage">
+                    <span>${value.text}</span>
+                </div>
+
+                </div>
+            </div>`;
+               
+                SetData.append(result);
+            })
+
+        }
+    })
+}
+function closeComments() {
+    $("#Comments").attr("hidden",true);
 }

@@ -180,7 +180,7 @@
                     if (SetData.children().length < 1) {
                         $("#searchRecentlyUsersLoader").show();
                     }
-
+                    var searchValue = $("#input").val();
                     $.ajax({
                         type: "POST",
                         url: "/UserPage/Search",
@@ -206,19 +206,19 @@
                 $("#input").keyup(function (e) {
                     e.preventDefault();
 
-                    var searchValue = $("input").val();
+                    var searchValue = $("#input").val();
                     var SetData = $("#listOfUsers");
-
+                   
                     $("#searchLoader").show();
                     $.ajax({
                         type: "POST",
                         url: "/UserPage/Search?value=" + searchValue,
-                        contentType: "html",
                         success: function (result) {
+
                             SetData.html("");
                             if (result.foundUsers.length != 0) {
                                 $.each(result.foundUsers, function (index, value) {
-
+                 
 
                                     var Data = '<a href="/UserPage/Profile/' + value.userIdentity.username + '">' + '<li class="clearfix"> ' +
                                         '                        <img style="width:45px;height:45px" src="' + value.userInfo.profileImage + '" alt = "avatar" > ' +
