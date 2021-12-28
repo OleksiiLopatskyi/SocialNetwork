@@ -197,6 +197,8 @@ img {
 }
 
 .gallery-item {
+    width:293px;
+    height:293px;
     position: relative;
     flex: 1 0 22rem;
     margin: 1rem;

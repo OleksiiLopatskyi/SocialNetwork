@@ -31,7 +31,13 @@ namespace SocialNetwork.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
-            return View(user);
+            var posts = await _dbService.GenerateFeeds(_db, user.UserIdentity.Username);
+            var model = new IndexViewModel
+            {
+                Profile = user,
+                Posts = posts.OrderByDescending(i=>i.Date).ToList()
+            };
+            return View(model);
         }
 
         //Search
@@ -39,7 +45,6 @@ namespace SocialNetwork.Controllers
         {
             var user = await _dbService.GetUserByUsername(_db, User.Identity.Name);
             var users = await _db.UserAccounts.Include(i=>i.UserInfo).Include(i => i.UserIdentity).Where(i=>i.UserIdentity.Username.Contains(value)).ToListAsync();
-           
             return Json(new {foundUsers = users,recentlyUsers=user.RecentlyUsers.OrderByDescending(i=>i.Id)});
         }
 
@@ -50,6 +55,8 @@ namespace SocialNetwork.Controllers
             var logedInUser = await _dbService.GetUserByUsername(_db,User.Identity.Name);
             var user = await _dbService.GetUserByUsername(_db,name);
             logedInUser.AddRecentlyUser(_db,user);
+            List<UserPost> reversedPosts = user.UserPosts.OrderByDescending(i=>i.Id).ToList();
+            user.UserPosts = reversedPosts;
             var model = (logedInUser,user);
             return View(model);
         }
@@ -111,7 +118,8 @@ namespace SocialNetwork.Controllers
             UserPost post = new UserPost()
             {
                 Title = postTitle,
-                Description=postDescription
+                Description = postDescription,
+                Date = DateTime.Now,
             };
 
             foreach (var item in files)
@@ -119,7 +127,7 @@ namespace SocialNetwork.Controllers
                 pathImage = $@"{pathFolder}\{item.FileName}";
                 ImagePost image = new ImagePost
                 {
-                    Url = pathImage
+                    Url = $"/Uploads/Posts/{userName}/{post.Title}/{item.FileName}"
                 };
                 post.Images.Add(image);
                 using (Stream fileStream = new FileStream(pathImage, FileMode.Create))
@@ -127,8 +135,9 @@ namespace SocialNetwork.Controllers
                     await item.CopyToAsync(fileStream);
                 }
             }
-            _dbService.CreatePost(_db,post,user);
-            return Json(new {path=isPathExists});
+            await _dbService.CreatePost(_db,post,user);
+
+            return Json(new {success=true});
         }
        
     }

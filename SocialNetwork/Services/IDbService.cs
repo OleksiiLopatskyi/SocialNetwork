@@ -24,7 +24,9 @@ namespace SocialNetwork.Services
         Task<List<Follower>> GetFollowingList(SocialNetworkContext context, string username);
         Task<Follower> GetFollowing(SocialNetworkContext context, string username, string followerName);
         Task<bool> isFollowingAsync(SocialNetworkContext context, string username, string followerName);
-        void CreatePost(SocialNetworkContext context, UserPost post,UserAccount account);
+        Task CreatePost(SocialNetworkContext context, UserPost post,UserAccount account);
+        Task<List<UserPost>> GenerateFeeds(SocialNetworkContext context, string username);
+        Task<UserPost> GetPostById(SocialNetworkContext context,int id);
 
        
     }

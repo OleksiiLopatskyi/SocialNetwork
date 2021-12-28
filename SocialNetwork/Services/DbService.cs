@@ -34,7 +34,7 @@ namespace SocialNetwork.Services
                 .Include(i => i.UserFollowers)
                 .Include(i => i.RecentlyUsers)
                 .Include(i => i.UserInfo)
-                .Include(i => i.UserPosts).ThenInclude(i => i.Images)
+                .Include(i => i.UserPosts).ThenInclude(i=>i.Likes).Include(i=>i.UserPosts).ThenInclude(i=>i.Images)
                 .FirstOrDefaultAsync(i => i.Id == userIdentity.Id);
             return userAccount;
         }
@@ -48,7 +48,18 @@ namespace SocialNetwork.Services
         public async Task<UserAccount> RegisterUser(SocialNetworkContext context, RegisterViewModel model)
         {
             Role role = await context.Roles.FirstOrDefaultAsync(i => i.Name == "user");
-            var profileImage = await model.ProfileImage.GetBytes();
+            byte[]imageBytes;
+            string imageUrl=string.Empty;
+            if (model.ProfileImage != null)
+            {
+                 imageBytes = await model.ProfileImage.GetBytes();
+                 imageUrl = imageBytes.GetImageFromByte();
+            }
+            else
+            {
+                imageUrl = "/Uploads/default-user.png";
+            }
+         
 
             UserIdentity userIdentity = new UserIdentity()
             {
@@ -62,12 +73,13 @@ namespace SocialNetwork.Services
 
             UserInfo userInfo = new UserInfo()
             {
-                ProfileImage = profileImage.GetImageFromByte(),
+                ProfileImage = imageUrl,
                 Age = DateTime.Now.Year - model.BirthDay.Year,
                 Country = model.Country,
                 City = model.City,
                 Status = model.Status
             };
+           
             UserAccount userAccount = new UserAccount()
             {
                 UserIdentity = userIdentity,
@@ -140,12 +152,33 @@ namespace SocialNetwork.Services
             return follower;
         }
 
-        public  void CreatePost(SocialNetworkContext context, UserPost post,UserAccount account)
+        public  async Task  CreatePost(SocialNetworkContext context, UserPost post,UserAccount account)
         {
             account.UserPosts.Add(post);
-            var posts =  context.UserPosts.Include(i => i.Images).FirstOrDefaultAsync(i=>i.UserAccountId==account.Id&&i.Id==post.Id);
+            var posts =  await context.UserPosts.Include(i => i.Images).FirstOrDefaultAsync(i=>i.UserAccountId==account.Id&&i.Id==post.Id);
             context.Update(account);
             context.SaveChanges();
+        }
+        public async Task<List<UserPost>> GenerateFeeds(SocialNetworkContext context,string username)
+        {
+            var user = await GetUserByUsername(context,username);
+            var FollowingUsersRecentlyPosts = new List<UserPost>();
+            foreach (var item in user.UserFollowing)
+            {
+                var followingUserAccount = await GetUserByUsername(context, item.Username);
+                foreach (var post in followingUserAccount.UserPosts.Where(i => (i.Date.Day - DateTime.Now.Day) <= 1))
+                {
+                    FollowingUsersRecentlyPosts.Add(post);
+                }
+            }
+            
+            return FollowingUsersRecentlyPosts;
+        }
+
+        public async Task<UserPost> GetPostById(SocialNetworkContext context,int id)
+        {
+            var post = await context.UserPosts.Include(i=>i.Comments).ThenInclude(i=>i.UserFrom).Include(i=>i.Likes).FirstOrDefaultAsync(i => i.Id == id);
+            return post;
         }
     }
 }

@@ -9,7 +9,9 @@ namespace SocialNetwork.Models.UserModels
     {
         public int Id { get; set; }
         public int UserAccountId { get; set; }
+        public UserAccount From { get; set; }
         public List<ImagePost> Images { get; set; }
+        public DateTime Date { get; set; }
         public string Location { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

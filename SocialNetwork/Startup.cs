@@ -41,6 +41,7 @@ namespace SocialNetwork
             );
             services.AddTransient<IDbService, DbService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IPostSevice, PostService>();
             services.AddControllersWithViews();
         }
 

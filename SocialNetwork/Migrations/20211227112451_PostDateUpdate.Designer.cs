@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialNetwork.Models.Database;
 
 namespace SocialNetwork.Migrations
 {
     [DbContext(typeof(SocialNetworkContext))]
-    partial class SocialNetworkContextModelSnapshot : ModelSnapshot
+    [Migration("20211227112451_PostDateUpdate")]
+    partial class PostDateUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,8 +81,8 @@ namespace SocialNetwork.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
@@ -332,7 +334,6 @@ namespace SocialNetwork.Migrations
                             Age = 18,
                             City = "Lviv",
                             Country = "Ukraine",
-                            ProfileImage = "/Uploads/admin.png",
                             Status = 0
                         });
                 });
@@ -394,7 +395,7 @@ namespace SocialNetwork.Migrations
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.Comment", b =>
                 {
-                    b.HasOne("SocialNetwork.Models.UserModels.Follower", "UserFrom")
+                    b.HasOne("SocialNetwork.Models.UserModels.UserIdentity", "UserFrom")
                         .WithMany()
                         .HasForeignKey("UserFromId");
 
@@ -481,13 +482,11 @@ namespace SocialNetwork.Migrations
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.UserPost", b =>
                 {
-                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", "From")
+                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
                         .WithMany("UserPosts")
                         .HasForeignKey("UserAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("From");
                 });
 
             modelBuilder.Entity("SocialNetwork.Models.ChatModels.Chat", b =>

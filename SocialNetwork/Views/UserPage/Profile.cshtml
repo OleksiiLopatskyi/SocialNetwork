@@ -78,20 +78,20 @@
             <div class="gallery">
                 @foreach (var post in Model.Item2.UserPosts)
                 {
-                    <div class="gallery-item" tabindex="0">
+                <div id="@post.Id" style="width: 293px; height: 293px;" class="gallery-item" tabindex="0">
 
-                        <img src="@post.Images.First().Url" class="gallery-image" alt="">
+                    <img src="@post.Images.First().Url" class="gallery-image" alt="">
 
-                        <div class="gallery-item-info">
+                    <div class="gallery-item-info">
 
-                            <ul>
-                                <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
-                                <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                            </ul>
-
-                        </div>
+                        <ul>
+                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i>@post.Likes.Count()</li>
+                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
+                        </ul>
 
                     </div>
+
+                </div>
                 }
             </div>
             <!-- End of gallery -->
