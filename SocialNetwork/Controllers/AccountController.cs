@@ -168,7 +168,7 @@ namespace SocialNetwork.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index", "UsePage");
+                return RedirectToAction("Index", "UserPage");
             }
             var user = await _dbService.GetUserByEmail(_db,email);
             if (user != null)

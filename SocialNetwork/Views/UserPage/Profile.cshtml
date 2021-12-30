@@ -16,49 +16,54 @@
 
         <div class="container">
             <br><br>
-            <div class="profile">
+                <div class="profile">
 
-                <div class="profile-image">
+                    <div class="profile-image">
 
-                    <img style="width:150px;height:150px" src="@Model.Item2.UserInfo.ProfileImage" alt="">
+                        <img style="width:150px;height:150px" src="@Model.Item2.UserInfo.ProfileImage" alt="">
+
+                    </div>
+
+                    <div class="profile-user-settings" style="display:flex">
+
+                        <h1 id="username" class="profile-user-name">@Model.Item2.UserIdentity.Username</h1>
+
+                        @if (User.Identity.Name == Model.Item2.UserIdentity.Username)
+                        {
+                            <button class="btn profile-edit-btn">Edit Profile</button>
+                            <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
+
+                        }
+                        else
+                        {
+                            <a id="Follow" asp-action="Follow" style="height: 32px; display: flex; width: 105px; background-color: #0095f6; justify-content: center; flex-direction: column;" class="btn profile-edit-btn"><span style="color:white">Follow</span></a>
+                        }
+
+
+                    </div>
+                    <div class="jumbotron" style="min-height:400px;height:auto;">
+                        <img id="closeFollowers" style="cursor:pointer;top: 12px; width: 30px; position: absolute; right: 0;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/High-contrast-dialog-close.svg/1200px-High-contrast-dialog-close.svg.png"/>
+                        <ul style="overflow-y:scroll;height:400px" class="list-group" id="followersList">
+                          
+                        </ul>
+                    </div>
+                    <div class="profile-stats">
+
+                        <ul>
+                            <li><span class="profile-stat-count">@Model.Item2.UserPosts.Count()</span> posts</li>
+                            <li id="followersButton"><span id="followers" class="profile-stat-count">@Model.Item2.UserFollowers.Count()</span> followers</li>
+                            <li id="followingButton"><span id="following"class="profile-stat-count">@Model.Item2.UserFollowing.Count()</span> following</li>
+                        </ul>
+
+                    </div>
+
+                    <div class="profile-bio">
+
+                        <p><span class="profile-real-name">Jane Doe</span> Lorem ipsum dolor sit, amet consectetur adipisicing elit 📷✈️🏕️</p>
+
+                    </div>
 
                 </div>
-
-                <div class="profile-user-settings" style="display:flex">
-
-                    <h1 class="profile-user-name">@Model.Item2.UserIdentity.Username</h1>
-
-                    @if (User.Identity.Name == Model.Item2.UserIdentity.Username)
-                    {
-                        <button class="btn profile-edit-btn">Edit Profile</button>
-                        <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
-
-                    }
-                    else
-                    {
-                        <a asp-action="Follow" style="height: 32px; display: flex; width: 105px; background-color: #0095f6; justify-content: center; flex-direction: column;" class="btn profile-edit-btn"><span style="color:white">Follow</span></a>
-                    }
-
-
-                </div>
-
-                <div class="profile-stats">
-
-                    <ul>
-                        <li><span class="profile-stat-count">164</span> posts</li>
-                        <li><span class="profile-stat-count">188</span> followers</li>
-                        <li><span class="profile-stat-count">206</span> following</li>
-                    </ul>
-
-                </div>
-
-                <div class="profile-bio">
-
-                    <p><span class="profile-real-name">Jane Doe</span> Lorem ipsum dolor sit, amet consectetur adipisicing elit 📷✈️🏕️</p>
-
-                </div>
-
-            </div>
             <!-- End of profile section -->
 
         </div>
@@ -71,223 +76,23 @@
         <div class="container">
 
             <div class="gallery">
+                @foreach (var post in Model.Item2.UserPosts)
+                {
+                <div id="@post.Id" style="width: 293px; height: 293px;" class="gallery-item" tabindex="0">
 
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
+                    <img src="@post.Images.First().Url" class="gallery-image" alt="">
 
                     <div class="gallery-item-info">
 
                         <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
+                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i>@post.Likes.Count()</li>
                             <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
                         </ul>
 
                     </div>
 
                 </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1497445462247-4330a224fdb1?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 89</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 5</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 42</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1502630859934-b3b41d18206c?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Video</span><i class="fas fa-video" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 38</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1498471731312-b6d2b8280c61?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 47</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 94</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 3</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 52</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 4</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1515814472071-4d632dbc5d4a?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 66</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1511407397940-d57f68e81203?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 45</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1518481612222-68bbe828ecd1?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 34</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1505058707965-09a4469a87e4?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 41</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <div class="gallery-item" tabindex="0">
-
-                    <img src="https://images.unsplash.com/photo-1423012373122-fff0a5d28cc9?w=500&h=500&fit=crop" class="gallery-image" alt="">
-
-                    <div class="gallery-item-type">
-
-                        <span class="visually-hidden">Video</span><i class="fas fa-video" aria-hidden="true"></i>
-
-                    </div>
-
-                    <div class="gallery-item-info">
-
-                        <ul>
-                            <li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 30</li>
-                            <li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
-                        </ul>
-
-                    </div>
-
-                </div>
-
+                }
             </div>
             <!-- End of gallery -->
 
@@ -300,4 +105,126 @@
 
 
 </body>
+@section scripts{ 
+<script>
+    function FollowButtonValue(value) {
+        if (value === "Follow") {
+            $("#Follow").text("Unfollow").css("color","black");
+            $("#Follow").css("background-color", "white");
+         
+        } else {
+            $("#Follow").text("Follow").css("color", "white");
+            $("#Follow").css("background-color", "#0095f6");
+         
+        }
+    }
+    function hideWhileLoading() {
+        $(".jumbotron").hide();
+        $("#Follow").hide();
+    }
+    $(document).ready(function () {
+        hideWhileLoading();
+        $.ajax({
+            type: "GET",
+            url: "/UserPage/GetUserInfo?username=" + document.getElementById("username").innerHTML,
+            success: function (json) {
+                if (json.follow === true) {
+                    $("#Follow").text("Unfollow");
+                    $("#Follow").css("background-color", "white");
+                }
+                $("#Follow").fadeIn();
+            }
+        })
+        $("#Follow").click(function (e) {
+            e.preventDefault();
+            var username = document.getElementById("username").innerHTML;
+            var FollowButtonText = $("#Follow").text();
+            $("#Follow").fadeOut();
+            $.ajax({
+                type: "POST",
+                url: "/UserPage/Follow?username=" + username,
+                success: function (json) {
+                    if (json.follow === true) {
+                         if (json.follow === true) {
+                             $("#followers").text(json.followers);
+                             FollowButtonValue(FollowButtonText);
+                             $("#Follow").fadeIn();
+                            }
+                    } else {
+                        FollowButtonValue(FollowButtonText);
+                        $("#followers").text(json.followers);
+                        $("#Follow").fadeIn();
 
+                    }
+                }
+            })
+        })
+        $("#followersButton").click(function (e) {
+            e.preventDefault();
+            var followersCount = $("#followers").text();
+            if (followersCount != "0") {
+                $(".jumbotron").fadeIn();
+                var User = document.getElementById("username").innerHTML;
+                var SetData = $("#followersList");
+                $.ajax({
+                    type: "POST",
+                    url: "/UserPage/Followers?username=" + User,
+                    success: function (result) {
+                        SetData.html("");
+                        if (result.length != 0) {
+                            $.each(result, function (index, value) {
+
+                                var Data = '<li class="list-group-item user-item text-left">' +
+                                    '                                <img class="img-circle img-user img-thumbnail " src="' + value.imageUrl + '">' +
+                                    '                                <h3>' +
+                                    '                                    <a href="/UserPage/Profile/' + value.username + '">' + value.username + '</a> <br>' +
+                                    '                                </h3>' +
+                                    '                            </li>';
+
+                                SetData.append(Data);
+                            })
+                        }
+                    }
+                })
+            }
+         
+        })
+        $("#followingButton").click(function (e) {
+            e.preventDefault();
+            var followingCount = $("#following").text();
+            if (followingCount != "0") {
+                $(".jumbotron").fadeIn();
+                var User = document.getElementById("username").innerHTML;
+                var SetData = $("#followersList");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/UserPage/Following?username=" + User,
+                    success: function (result) {
+                        SetData.html("");
+                        if (result.length != 0) {
+                            $.each(result, function (index, value) {
+
+                                var Data = '<li class="list-group-item user-item text-left">' +
+                                    '                                <img class="img-circle img-user img-thumbnail " src="' + value.imageUrl + '">' +
+                                    '                                <h3>' +
+                                    '                                    <a href="/UserPage/Profile/' + value.username + '">' + value.username + '</a> <br>' +
+                                    '                                </h3>' +
+                                    '                            </li>';
+
+                                SetData.append(Data);
+                            })
+                        }
+                    }
+                })
+            }
+           
+        })
+        $("#closeFollowers").click(function (e) {
+            e.preventDefault();
+            $(".jumbotron").hide();
+        })
+
+    })
+</script>
+}

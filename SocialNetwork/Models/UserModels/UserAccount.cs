@@ -13,7 +13,9 @@ namespace SocialNetwork.Models.UserModels
         public int UserIdentityId { get; set; }
         public int UserInfoId { get; set; }
         public List<UserPost> UserPosts { get; set; }
-        public List<UserIdentity> UserFriends { get; set; }
+        public List<Follower> UserFollowers { get; set; }
+        public List<Follower> UserFollowing { get; set; }
+        public List<Follower> RecentlyUsers { get; set; }
         public List<UserInfo> FriendRequests { get; set; }
         public List<Chat> UserChats { get; set; }
         public UserIdentity UserIdentity { get; set; }
@@ -21,8 +23,10 @@ namespace SocialNetwork.Models.UserModels
         public UserAccount()
         {
             UserPosts = new List<UserPost>();
-            UserFriends = new List<UserIdentity>();
+            UserFollowers = new List<Follower>();
+            UserFollowing = new List<Follower>();
             FriendRequests = new List<UserInfo>();
+            RecentlyUsers = new List<Follower>();
             UserChats = new List<Chat>();
         }
     }

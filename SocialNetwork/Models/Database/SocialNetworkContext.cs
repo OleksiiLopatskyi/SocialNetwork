@@ -42,7 +42,7 @@ namespace SocialNetwork.Models.Database
             Role userRole = new Role() {Id=2,Name=userRoleName};
 
             UserIdentity adminIdentity = new UserIdentity() {Id=1,Email = adminEmail, RoleId=2,isEmailConfirmed=EmailConfirm.Confirmed,Username = adminUsername, Password = adminPassword};
-            UserInfo adminInfo = new UserInfo() {Id=1,Age = adminAge, City = adminCity, Country = adminCountry, Status = adminStatus };
+            UserInfo adminInfo = new UserInfo() {Id=1,Age = adminAge, City = adminCity, Country = adminCountry, Status = adminStatus,ProfileImage="/Uploads/admin.png"};
             UserAccount admin = new UserAccount() {Id=1,UserIdentityId=1,UserInfoId=1};
             modelBuilder.Entity<Role>().HasData(new Role[] { adminRole, userRole });
             modelBuilder.Entity<UserIdentity>().HasData(new UserIdentity[] { adminIdentity });

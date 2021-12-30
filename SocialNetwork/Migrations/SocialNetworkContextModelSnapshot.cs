@@ -79,8 +79,8 @@ namespace SocialNetwork.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Date")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
@@ -98,6 +98,59 @@ namespace SocialNetwork.Migrations
                     b.HasIndex("UserPostId");
 
                     b.ToTable("UserPostComments");
+                });
+
+            modelBuilder.Entity("SocialNetwork.Models.UserModels.Follower", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserAccountId1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserAccountId2")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserAccountId");
+
+                    b.HasIndex("UserAccountId1");
+
+                    b.HasIndex("UserAccountId2");
+
+                    b.ToTable("Follower");
+                });
+
+            modelBuilder.Entity("SocialNetwork.Models.UserModels.ImagePost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserPostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserPostId");
+
+                    b.ToTable("ImagePost");
                 });
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.Like", b =>
@@ -213,9 +266,6 @@ namespace SocialNetwork.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserAccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
@@ -228,8 +278,6 @@ namespace SocialNetwork.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserAccountId");
 
                     b.ToTable("UserIdentities");
 
@@ -284,6 +332,7 @@ namespace SocialNetwork.Migrations
                             Age = 18,
                             City = "Lviv",
                             Country = "Ukraine",
+                            ProfileImage = "/Uploads/admin.png",
                             Status = 0
                         });
                 });
@@ -295,16 +344,19 @@ namespace SocialNetwork.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserAccountId")
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserAccountId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -342,7 +394,7 @@ namespace SocialNetwork.Migrations
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.Comment", b =>
                 {
-                    b.HasOne("SocialNetwork.Models.UserModels.UserIdentity", "UserFrom")
+                    b.HasOne("SocialNetwork.Models.UserModels.Follower", "UserFrom")
                         .WithMany()
                         .HasForeignKey("UserFromId");
 
@@ -351,6 +403,28 @@ namespace SocialNetwork.Migrations
                         .HasForeignKey("UserPostId");
 
                     b.Navigation("UserFrom");
+                });
+
+            modelBuilder.Entity("SocialNetwork.Models.UserModels.Follower", b =>
+                {
+                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
+                        .WithMany("RecentlyUsers")
+                        .HasForeignKey("UserAccountId");
+
+                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
+                        .WithMany("UserFollowers")
+                        .HasForeignKey("UserAccountId1");
+
+                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
+                        .WithMany("UserFollowing")
+                        .HasForeignKey("UserAccountId2");
+                });
+
+            modelBuilder.Entity("SocialNetwork.Models.UserModels.ImagePost", b =>
+                {
+                    b.HasOne("SocialNetwork.Models.UserModels.UserPost", null)
+                        .WithMany("Images")
+                        .HasForeignKey("UserPostId");
                 });
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.Like", b =>
@@ -395,10 +469,6 @@ namespace SocialNetwork.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
-                        .WithMany("UserFriends")
-                        .HasForeignKey("UserAccountId");
-
                     b.Navigation("Role");
                 });
 
@@ -411,9 +481,13 @@ namespace SocialNetwork.Migrations
 
             modelBuilder.Entity("SocialNetwork.Models.UserModels.UserPost", b =>
                 {
-                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", null)
+                    b.HasOne("SocialNetwork.Models.UserModels.UserAccount", "From")
                         .WithMany("UserPosts")
-                        .HasForeignKey("UserAccountId");
+                        .HasForeignKey("UserAccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("From");
                 });
 
             modelBuilder.Entity("SocialNetwork.Models.ChatModels.Chat", b =>
@@ -440,9 +514,13 @@ namespace SocialNetwork.Migrations
                 {
                     b.Navigation("FriendRequests");
 
+                    b.Navigation("RecentlyUsers");
+
                     b.Navigation("UserChats");
 
-                    b.Navigation("UserFriends");
+                    b.Navigation("UserFollowers");
+
+                    b.Navigation("UserFollowing");
 
                     b.Navigation("UserPosts");
                 });
@@ -450,6 +528,8 @@ namespace SocialNetwork.Migrations
             modelBuilder.Entity("SocialNetwork.Models.UserModels.UserPost", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Likes");
                 });
